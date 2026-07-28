@@ -3,6 +3,7 @@ import { View, StyleSheet, SafeAreaView, ScrollView, Pressable } from 'react-nat
 import { theme } from '../../theme';
 import { AppText, AppIcon, SearchBar } from '../../components';
 import { useNavigation } from '@react-navigation/native';
+import { SearchFiltersModal } from './components/SearchFiltersModal';
 
 const MOCK_RECENT = [
   'شقق قريبة من جامعة الملك سعود',
@@ -37,11 +38,20 @@ const MOCK_SUGGESTIONS = [
 
 export const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [filtersVisible, setFiltersVisible] = useState(false);
   const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safeArea} accessible accessibilityLabel="شاشة البحث">
       <View style={styles.header}>
+        <Pressable
+          style={styles.filterBtn}
+          accessibilityRole="button"
+          accessibilityLabel="الفلاتر"
+          onPress={() => setFiltersVisible(true)}
+        >
+          <AppIcon name="Sliders" size="md" color="primary" />
+        </Pressable>
         <View style={styles.searchWrapper}>
           <SearchBar
             value={searchQuery}
@@ -60,6 +70,11 @@ export const SearchScreen: React.FC = () => {
           <AppIcon name="ChevronRight" size="lg" color="primary" />
         </Pressable>
       </View>
+
+      <SearchFiltersModal
+        visible={filtersVisible}
+        onClose={() => setFiltersVisible(false)}
+      />
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         {searchQuery.length > 0 ? (
@@ -169,6 +184,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceDefault,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.borderSubtle,
+  },
+  filterBtn: {
+    padding: theme.spacing[8],
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.surfaceSubdued,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backBtn: {
     padding: theme.spacing[8],
