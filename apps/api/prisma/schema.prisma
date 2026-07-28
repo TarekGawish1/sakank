@@ -21,7 +21,8 @@ model Governorate {
 
   name String @unique @map("name")
 
-  cities City[]
+  cities     City[]
+  properties Property[]
 
   @@index([name], name: "idx_governorate_name")
   @@map("governorate")
@@ -39,6 +40,7 @@ model City {
 
   governorate Governorate @relation(fields: [governorateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   areas       Area[]
+  properties  Property[]
 
   @@unique([governorateId, name], name: "uq_city_governorate_name")
   @@index([name], name: "idx_city_name")
@@ -56,7 +58,8 @@ model Area {
   name   String @map("name")
   cityId String @map("city_id")
 
-  city City @relation(fields: [cityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  city       City       @relation(fields: [cityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  properties Property[]
 
   @@unique([cityId, name], name: "uq_area_city_name")
   @@index([name], name: "idx_area_name")
@@ -149,7 +152,8 @@ model OwnerProfile {
   nationalId String? @unique @map("national_id")
   occupation String? @map("occupation")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  properties Property[]
 
   @@index([nationalId], name: "idx_owner_profile_national_id")
   @@map("owner_profile")
@@ -179,3 +183,63 @@ model VerificationRequest {
 // Note: Partial Unique Indexes for Soft Delete (where deletedAt is null)
 // will be created manually in SQL migrations later because Prisma 
 // currently does not support them natively in schema.prisma.
+
+enum PropertyType {
+  APARTMENT_BUILDING
+  VILLA
+  HOUSE
+  DORMITORY
+  COMPOUND
+}
+
+model Property {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  ownerProfileId String       @map("owner_profile_id")
+  governorateId  String       @map("governorate_id")
+  cityId         String       @map("city_id")
+  areaId         String       @map("area_id")
+  title          String       @map("title")
+  description    String       @map("description")
+  address        String       @map("address")
+  latitude       Decimal      @map("latitude") @db.Decimal
+  longitude      Decimal      @map("longitude") @db.Decimal
+  propertyType   PropertyType @map("property_type")
+
+  ownerProfile OwnerProfile @relation(fields: [ownerProfileId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  governorate  Governorate  @relation(fields: [governorateId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  city         City         @relation(fields: [cityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  area         Area         @relation(fields: [areaId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  images PropertyImage[]
+
+  @@index([ownerProfileId], name: "idx_property_owner_profile_id")
+  @@index([governorateId], name: "idx_property_governorate_id")
+  @@index([cityId], name: "idx_property_city_id")
+  @@index([areaId], name: "idx_property_area_id")
+  @@index([propertyType], name: "idx_property_type")
+  @@map("property")
+}
+
+model PropertyImage {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  propertyId   String  @map("property_id")
+  url          String  @map("url")
+  displayOrder Int     @map("display_order")
+  isPrimary    Boolean @default(false) @map("is_primary")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([propertyId], name: "idx_property_image_property_id")
+  @@index([displayOrder], name: "idx_property_image_display_order")
+  @@map("property_image")
+}
