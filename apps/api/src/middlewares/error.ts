@@ -13,6 +13,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
       error: {
         code: err.errorCode,
         message: err.message,
+        details: err.details || null,
       },
     });
   }
@@ -25,6 +26,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
     error: {
       code: 'SYS_500',
       message: 'Internal Server Error',
+      details: null,
     },
   });
 };

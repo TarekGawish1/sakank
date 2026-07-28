@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -101,7 +102,8 @@ model User {
   deletedAt DateTime? @map("deleted_at")
   version   Int       @default(1) @map("version")
 
-  email           String?   @unique @map("email")
+  email           String    @unique @map("email")
+  password        String    @map("password")
   phone           String    @unique @map("phone")
   firstName       String    @map("first_name")
   lastName        String    @map("last_name")
@@ -109,7 +111,8 @@ model User {
   role            UserRole  @map("role")
   isActive        Boolean   @default(true) @map("is_active")
   isBlocked       Boolean   @default(false) @map("is_blocked")
-  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  verificationToken String? @unique @map("verification_token")
   lastLoginAt     DateTime? @map("last_login_at")
 
   studentProfile               StudentProfile?
@@ -409,4 +412,35 @@ model StayRequest {
   @@index([status], name: "idx_stay_request_status")
   @@index([moveInDate], name: "idx_stay_request_move_in_date")
   @@map("stay_request")
+}
+
+enum NotificationType {
+  STAY_REQUEST_RECEIVED
+  STAY_REQUEST_ACCEPTED
+  STAY_REQUEST_REJECTED
+  STAY_REQUEST_CANCELLED
+  VERIFICATION_APPROVED
+  VERIFICATION_REJECTED
+  SYSTEM
+}
+
+model Notification {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  userId      String           @map("user_id")
+  type        NotificationType @map("type")
+  title       String           @map("title")
+  body        String           @map("body")
+  isRead      Boolean          @default(false) @map("is_read")
+  readAt      DateTime?        @map("read_at")
+  referenceId String?          @map("reference_id")
+
+  @@index([userId], name: "idx_notification_user_id")
+  @@index([userId, isRead], name: "idx_notification_user_unread")
+  @@index([createdAt], name: "idx_notification_created_at")
+  @@map("notification")
 }
