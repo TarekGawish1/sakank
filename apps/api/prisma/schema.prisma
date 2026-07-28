@@ -73,6 +73,100 @@ model University {
 
   name String @unique @map("name")
 
+  students StudentProfile[]
+
   @@index([name], name: "idx_university_name")
   @@map("university")
+}
+
+enum UserRole {
+  STUDENT
+  OWNER
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  email           String?   @unique @map("email")
+  phone           String    @unique @map("phone")
+  firstName       String    @map("first_name")
+  lastName        String    @map("last_name")
+  gender          Gender    @map("gender")
+  role            UserRole  @map("role")
+  isActive        Boolean   @default(true) @map("is_active")
+  isBlocked       Boolean   @default(false) @map("is_blocked")
+  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  lastLoginAt     DateTime? @map("last_login_at")
+
+  studentProfile       StudentProfile?
+  ownerProfile         OwnerProfile?
+  verificationRequests VerificationRequest[]
+
+  @@index([email], name: "idx_user_email")
+  @@index([phone], name: "idx_user_phone")
+  @@map("user")
+}
+
+model StudentProfile {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  userId       String  @unique @map("user_id")
+  universityId String  @map("university_id")
+  faculty      String? @map("faculty")
+  academicYear String? @map("academic_year")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  university University @relation(fields: [universityId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("student_profile")
+}
+
+model OwnerProfile {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  userId     String  @unique @map("user_id")
+  nationalId String? @unique @map("national_id")
+  occupation String? @map("occupation")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("owner_profile")
+}
+
+model VerificationRequest {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  userId      String             @map("user_id")
+  status      VerificationStatus @default(PENDING) @map("status")
+  submittedAt DateTime           @default(now()) @map("submitted_at")
+  reviewedAt  DateTime?          @map("reviewed_at")
+  reviewNotes String?            @map("review_notes")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_verification_request_user_id")
+  @@map("verification_request")
 }
