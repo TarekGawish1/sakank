@@ -3,6 +3,9 @@ import { PaginationMeta } from '~/shared/types';
 import { notificationsRepository } from './notifications.repository';
 import { NotificationResponse, UnreadCountResponse } from './notifications.dto';
 import { toNotificationResponse } from './notifications.mapper';
+import { sendMulticastNotification } from '~/lib/firebase';
+import { prisma } from '~/lib/prisma';
+import { NotificationType } from '@prisma/client';
 
 export const notificationsService = {
   /**
@@ -50,5 +53,50 @@ export const notificationsService = {
   getUnreadCount: async (userId: string): Promise<UnreadCountResponse> => {
     const count = await notificationsRepository.countUnread(userId);
     return { count };
+  },
+
+  // --- Device Tokens ---
+
+  registerDeviceToken: async (userId: string, token: string): Promise<void> => {
+    await notificationsRepository.registerDeviceToken(userId, token);
+  },
+
+  unregisterDeviceToken: async (userId: string, token: string): Promise<void> => {
+    await notificationsRepository.unregisterDeviceToken(userId, token);
+  },
+
+  // --- Creation & Push Notification ---
+
+  /**
+   * Creates an in-app notification and simultaneously sends a Push Notification via Firebase.
+   */
+  createNotification: async (
+    userId: string,
+    type: NotificationType,
+    title: string,
+    body: string,
+    referenceId?: string
+  ): Promise<void> => {
+    // 1. Create In-App Notification
+    await prisma.notification.create({
+      data: {
+        userId,
+        type,
+        title,
+        body,
+        referenceId,
+      },
+    });
+
+    // 2. Fetch User's Device Tokens
+    const tokens = await notificationsRepository.getUserTokens(userId);
+
+    // 3. Send Push Notification if tokens exist
+    if (tokens.length > 0) {
+      await sendMulticastNotification(tokens, title, body, {
+        type,
+        referenceId: referenceId || '',
+      });
+    }
   },
 };

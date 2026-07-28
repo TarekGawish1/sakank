@@ -44,4 +44,26 @@ export const notificationsController = {
       next(error);
     }
   },
+
+  registerDeviceToken: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.userId;
+      const { token } = req.body;
+      await notificationsService.registerDeviceToken(userId, token);
+      return sendSuccess(res, { message: 'Device token registered successfully' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  unregisterDeviceToken: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.userId;
+      const { token } = req.params;
+      await notificationsService.unregisterDeviceToken(userId, token);
+      return sendSuccess(res, { message: 'Device token removed successfully' });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

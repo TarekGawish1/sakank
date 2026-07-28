@@ -119,6 +119,7 @@ model User {
   ownerProfile                 OwnerProfile?
   verificationRequests         VerificationRequest[] @relation("UserVerificationRequests")
   reviewedVerificationRequests VerificationRequest[] @relation("ReviewedVerificationRequests")
+  deviceTokens                 DeviceToken[]
 
   @@index([email], name: "idx_user_email")
   @@index([phone], name: "idx_user_phone")
@@ -441,6 +442,23 @@ model Notification {
 
   @@index([userId], name: "idx_notification_user_id")
   @@index([userId, isRead], name: "idx_notification_user_unread")
+  @@index([isRead], name: "idx_notification_is_read")
   @@index([createdAt], name: "idx_notification_created_at")
   @@map("notification")
+}
+
+model DeviceToken {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  userId String @map("user_id")
+  token  String @unique @map("token")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "idx_device_token_user_id")
+  @@map("device_token")
 }

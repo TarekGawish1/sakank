@@ -1,0 +1,209 @@
+{
+  "info": {
+    "name": "Sakank API v1",
+    "description": "Comprehensive Postman collection for the Sakank Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "YOUR_ACCESS_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"Password123\",\n  \"firstName\": \"Ahmed\",\n  \"lastName\": \"Ali\",\n  \"phone\": \"+201000000000\",\n  \"gender\": \"MALE\",\n  \"role\": \"STUDENT\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/verify-email",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PUT_TOKEN_FROM_EMAIL_HERE\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"Password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"YOUR_REFRESH_TOKEN\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Users & Profile",
+      "item": [
+        {
+          "name": "Update Student Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/profile/student",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gender\": \"MALE\",\n  \"universityId\": \"uuid-here\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Get Universities",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/universities"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Listings",
+      "item": [
+        {
+          "name": "Get All Listings (Feed)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/listings?search=غرفة&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["listings"],
+              "query": [
+                { "key": "search", "value": "غرفة" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Listing Details",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/listings/:id",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Stay Requests",
+      "item": [
+        {
+          "name": "Create Request (Student)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/stay-requests",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"listing-uuid-here\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Get My Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/stay-requests",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Properties (Owner)",
+      "item": [
+        {
+          "name": "Create Property",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/properties",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"شقة ممتازة في الدقي\",\n  \"description\": \"وصف الشقة هنا\",\n  \"address\": \"شارع التحرير\",\n  \"governorateId\": \"uuid\",\n  \"cityId\": \"uuid\",\n  \"areaId\": \"uuid\",\n  \"latitude\": 30.0444,\n  \"longitude\": 31.2357,\n  \"propertyType\": \"APARTMENT_BUILDING\",\n  \"imageUrls\": [\"https://example.com/img.jpg\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Uploads",
+      "item": [
+        {
+          "name": "Get Cloudinary Signature",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/upload/signature",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

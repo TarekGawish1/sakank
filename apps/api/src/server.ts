@@ -1,8 +1,11 @@
 import { app } from './app';
 import { env } from './config/env';
 import { logger } from './utils/logger';
+import { initFirebase } from './lib/firebase';
 
 const startServer = () => {
+  initFirebase();
+
   const server = app.listen(env.PORT, () => {
     logger.info(`🚀 API Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
   });
