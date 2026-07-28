@@ -12,6 +12,7 @@ import {
 import { theme } from '../../theme';
 import { AppText } from '../AppText';
 import { Spinner } from '../Spinner';
+import { AppIcon } from '../AppIcon';
 
 export interface InputProps extends Omit<TextInputProps, 'style'> {
   // Anatomy
@@ -218,9 +219,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props, ref) => {
             accessibilityRole="button"
             accessibilityLabel="Clear text"
           >
-            <AppText variant="caption" color="textTertiary">
-              ✕
-            </AppText>
+            <AppIcon name="X" size="sm" color="tertiary" />
           </Pressable>
         )}
 
@@ -232,9 +231,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props, ref) => {
             accessibilityRole="button"
             accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
           >
-            <AppText variant="label" color="textBrand">
-              {isPasswordVisible ? 'Hide' : 'Show'}
-            </AppText>
+            <AppIcon name={isPasswordVisible ? 'EyeOff' : 'Eye'} size="md" color="secondary" />
           </Pressable>
         )}
 
