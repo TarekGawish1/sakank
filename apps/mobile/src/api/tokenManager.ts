@@ -1,31 +1,41 @@
-/**
- * Token Manager Abstraction
- * Handles storing, retrieving, and removing authentication tokens.
- * Currently using in-memory placeholders. Will be integrated with secure storage.
- */
+import * as SecureStore from 'expo-secure-store';
 
-let inMemoryAccessToken: string | null = null;
-let inMemoryRefreshToken: string | null = null;
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
 
 export const TokenManager = {
   async getAccessToken(): Promise<string | null> {
-    return inMemoryAccessToken;
+    try {
+      return await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+    } catch {
+      return null;
+    }
   },
 
   async setAccessToken(token: string): Promise<void> {
-    inMemoryAccessToken = token;
+    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, token);
   },
 
   async getRefreshToken(): Promise<string | null> {
-    return inMemoryRefreshToken;
+    try {
+      return await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    } catch {
+      return null;
+    }
   },
 
   async setRefreshToken(token: string): Promise<void> {
-    inMemoryRefreshToken = token;
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, token);
   },
 
   async clearTokens(): Promise<void> {
-    inMemoryAccessToken = null;
-    inMemoryRefreshToken = null;
+    try {
+      await Promise.all([
+        SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
+        SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY)
+      ]);
+    } catch {
+      // Ignore deletion errors
+    }
   }
 };
