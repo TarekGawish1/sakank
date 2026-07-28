@@ -21,6 +21,7 @@ import { verificationRoutes } from '~/modules/verification/verification.routes';
 import { notificationsRoutes } from '~/modules/notifications/notifications.routes';
 import { adminRoutes } from '~/modules/admin/admin.routes';
 import { propertiesRouter } from '~/modules/properties/properties.routes';
+import { uploadRouter } from '~/modules/upload/upload.routes';
 
 const app = express();
 
@@ -77,6 +78,7 @@ app.use('/api/v1/verification', verificationRoutes);
 app.use('/api/v1/notifications', notificationsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/properties', propertiesRouter);
+app.use('/api/v1/upload', uploadRouter);
 
 // ── Error Handler (MUST be last) ────────────────────────────────────
 app.use(errorHandler);
