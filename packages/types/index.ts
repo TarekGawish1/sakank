@@ -1,1 +1,0 @@
-// @sakank/types entry point

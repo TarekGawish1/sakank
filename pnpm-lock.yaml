@@ -113,17 +113,56 @@ importers:
 
   apps/mobile: {}
 
-  packages/config: {}
+  packages/config:
+    devDependencies:
+      eslint:
+        specifier: ^8.0.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
-  packages/constants: {}
+  packages/constants:
+    devDependencies:
+      eslint:
+        specifier: ^8.0.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
-  packages/types: {}
+  packages/types:
+    devDependencies:
+      eslint:
+        specifier: ^8.0.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
   packages/ui: {}
 
-  packages/utils: {}
+  packages/utils:
+    devDependencies:
+      eslint:
+        specifier: ^8.0.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
-  packages/validation: {}
+  packages/validation:
+    dependencies:
+      zod:
+        specifier: ^3.0.0
+        version: 3.25.76
+    devDependencies:
+      eslint:
+        specifier: ^8.0.0
+        version: 8.57.1
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
 packages:
 
