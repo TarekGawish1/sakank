@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, SafeAreaView, View, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, SafeAreaView, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { theme } from '../../theme';
 import { AppText } from '../../components';
 import { HomeHeader } from './components/HomeHeader';
@@ -7,38 +7,16 @@ import { QuickFilters } from './components/QuickFilters';
 import { FeaturedListingsSection } from './components/FeaturedListingsSection';
 import { NearbyListingsSection } from './components/NearbyListingsSection';
 import { RecommendedListingsSection } from './components/RecommendedListingsSection';
-import { ListingsApi, ListingFeedItem } from '../../api/listings.api';
-import { ApiError } from '../../api/errors';
+import { useListings } from '../../hooks/listings';
 
 export const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [listings, setListings] = useState<ListingFeedItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, isError, error, refetch, isRefetching } = useListings();
 
-  useEffect(() => {
-    fetchListings();
-  }, []);
-
-  const fetchListings = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response = await ListingsApi.getListings({ _t: Date.now() });
-      setListings(response.items || []);
-    } catch (err: any) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('حدث خطأ أثناء تحميل العقارات');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const listings = data?.items || [];
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading && !isRefetching) {
       return (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={theme.colors.brandPrimary} />
@@ -47,10 +25,12 @@ export const HomeScreen: React.FC = () => {
       );
     }
 
-    if (error) {
+    if (isError) {
       return (
         <View style={styles.centerContainer}>
-          <AppText variant="bodyBase" color="error" style={styles.errorText}>{error}</AppText>
+          <AppText variant="bodyBase" color="error" style={styles.errorText}>
+            {error instanceof Error ? error.message : 'حدث خطأ أثناء تحميل العقارات'}
+          </AppText>
         </View>
       );
     }
@@ -74,7 +54,18 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} accessible accessibilityLabel="الشاشة الرئيسية">
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.container} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefetching} 
+            onRefresh={refetch} 
+            colors={[theme.colors.brandPrimary]} 
+            tintColor={theme.colors.brandPrimary} 
+          />
+        }
+      >
         <HomeHeader
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -107,6 +98,9 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: theme.spacing[16],
     color: theme.colors.textSecondary,
+  },
+  errorText: {
+    textAlign: 'center',
   },
   bottomSpacer: {
     height: theme.spacing[40],
