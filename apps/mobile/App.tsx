@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { I18nManager, View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import * as Updates from 'expo-updates';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
@@ -28,13 +28,7 @@ export default function App() {
     if (!I18nManager.isRTL) {
       I18nManager.allowRTL(true);
       I18nManager.forceRTL(true);
-      if (__DEV__) {
-        // Only works in production bundle for OTA updates normally, 
-        // but let's reload to apply RTL if needed.
-        // We'll avoid calling reload in dev to avoid loops, just force it.
-      } else {
-        Updates.reloadAsync();
-      }
+      // In a real app we'd reload, but for Expo Go preview we'll skip forcing reload
     }
   }, []);
 
