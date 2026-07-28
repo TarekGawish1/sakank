@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: theme.spacing[16],
-    paddingVertical: theme.spacing[8],
+    paddingTop: theme.spacing[4],
+    paddingBottom: theme.spacing[12],
   },
   bottomSpacer: {
     height: theme.spacing[40],

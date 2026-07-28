@@ -1,18 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { theme } from '../../../theme';
-import { AppText, Avatar, AppIcon } from '../../../components';
+import { Avatar, AppIcon } from '../../../components';
 
 export const HomeHeader: React.FC = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.userSection}>
-        <Avatar initials="TO" size="sm" status="online" />
-        <View style={styles.greeting}>
-          <AppText variant="caption" color="textSecondary">أهلاً بك،</AppText>
-          <AppText variant="title2" color="textPrimary">طارق جاويش</AppText>
-        </View>
-      </View>
+      <Avatar initials="TO" size="sm" status="online" />
       
       <Pressable
         style={styles.notificationBtn}
@@ -28,20 +22,12 @@ export const HomeHeader: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: theme.spacing[16],
-    paddingVertical: theme.spacing[12],
     backgroundColor: theme.colors.surfaceDefault,
-  },
-  userSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing[12],
-  },
-  greeting: {
-    justifyContent: 'center',
   },
   notificationBtn: {
     padding: theme.spacing[8],
