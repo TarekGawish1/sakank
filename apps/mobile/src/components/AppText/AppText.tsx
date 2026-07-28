@@ -16,8 +16,6 @@ export interface AppTextProps extends Omit<TextProps, 'style'> {
   style?: StyleProp<TextStyle>;
 }
 
-const ARABIC_REGEX = /[\u0600-\u06FF]/;
-
 const getFontWeightStyle = (weight: TextWeight): TextStyle['fontWeight'] => {
   switch (weight) {
     case 'medium':
@@ -55,12 +53,10 @@ export const AppText: React.FC<AppTextProps> = ({
   style,
   ...rest
 }) => {
-  const textStr = useMemo(() => extractString(children), [children]);
-  const isArabic = ARABIC_REGEX.test(textStr);
-
   const baseTypography = theme.typography[variant];
   const textColor = theme.colors[color];
-  const fontFamily = isArabic ? theme.fonts.arabic : theme.fonts.primary;
+  // Determine font based on active language (RTL status)
+  const fontFamily = I18nManager.isRTL ? theme.fonts.arabic : theme.fonts.primary;
   const fontWeight = weight ? getFontWeightStyle(weight) : baseTypography.fontWeight;
   const textAlign = getAlignmentStyle(align);
 
