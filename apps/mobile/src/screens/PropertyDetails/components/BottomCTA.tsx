@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { theme } from '../../../../theme';
-import { Button, AppIcon } from '../../../../components';
+import { theme } from '../../../theme';
+import { Button, AppIcon } from '../../../components';
 
 export const BottomCTA = () => {
   return (

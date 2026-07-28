@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import { theme } from '../../../../theme';
-import { AppText, Card, CardBody, AppIcon, Button } from '../../../../components';
+import { theme } from '../../../theme';
+import { AppText, Card, CardBody, AppIcon, Button } from '../../../components';
 
 export const OwnerCard = () => {
   return (

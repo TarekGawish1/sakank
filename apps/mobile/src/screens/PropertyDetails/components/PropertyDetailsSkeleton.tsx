@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
-import { theme } from '../../../../theme';
+import { theme } from '../../../theme';
 
 export const PropertyDetailsSkeleton = () => {
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { theme } from '../../../../theme';
-import { AppText } from '../../../../components';
+import { theme } from '../../../theme';
+import { AppText } from '../../../components';
 
 export const DescriptionSection = () => {
   const [expanded, setExpanded] = useState(false);

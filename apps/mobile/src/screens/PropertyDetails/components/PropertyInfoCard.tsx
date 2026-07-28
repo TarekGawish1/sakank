@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { theme } from '../../../../theme';
-import { AppText, Card, CardBody, AppIcon } from '../../../../components';
-import { IconName } from '../../../../components/AppIcon';
+import { theme } from '../../../theme';
+import { AppText, Card, CardBody, AppIcon } from '../../../components';
+import { IconName } from '../../../components/AppIcon';
 
 const InfoItem = ({ icon, label, value }: { icon: IconName, label: string, value: string | number }) => (
   <View style={styles.infoItem}>

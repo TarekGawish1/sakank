@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { theme } from '../../../../theme';
-import { AppText, AppIcon } from '../../../../components';
-import { IconName } from '../../../../components/AppIcon';
+import { theme } from '../../../theme';
+import { AppText, AppIcon } from '../../../components';
+import { IconName } from '../../../components/AppIcon';
 
 const AMENITIES: { id: string, name: string, icon: IconName }[] = [
   { id: '1', name: 'واي فاي', icon: 'Wifi' },

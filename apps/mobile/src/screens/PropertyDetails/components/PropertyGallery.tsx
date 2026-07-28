@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Image, StyleSheet, Pressable, Platform, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { theme } from '../../../../theme';
-import { AppIcon } from '../../../../components';
+import { theme } from '../../../theme';
+import { AppIcon } from '../../../components';
 
 export const PropertyGallery = () => {
   const navigation = useNavigation();
