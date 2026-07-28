@@ -2,11 +2,16 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
-import { MOCK_LISTINGS } from '../mockData';
+import { ListingFeedItem } from '../../../../api/listings.api';
 
-export const RecommendedListingsSection: React.FC = () => {
-  // Mock taking some listings for recommended
-  const recommended = MOCK_LISTINGS.slice(2, 5);
+interface RecommendedListingsSectionProps {
+  data: ListingFeedItem[];
+}
+
+export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProps> = ({ data }) => {
+  const recommended = data.slice(2, 5);
+
+  if (recommended.length === 0) return null;
 
   return (
     <View style={styles.container}>
@@ -18,7 +23,12 @@ export const RecommendedListingsSection: React.FC = () => {
         {recommended.map(item => (
           <ListingCard
             key={item.id}
-            {...item}
+            image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
+            title={item.title}
+            location={`${item.location.area}، ${item.location.city}`}
+            price={item.monthlyRent}
+            featured={item.isFeatured}
+            available={item.availabilityStatus === 'AVAILABLE'}
             onPress={() => {}}
             onFavoritePress={() => {}}
           />

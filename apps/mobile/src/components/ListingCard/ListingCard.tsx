@@ -16,7 +16,7 @@ export interface ListingCardProps {
   currency?: string;
   rating?: number;
   reviewCount?: number;
-  ownerName: string;
+  ownerName?: string;
   ownerAvatar?: string;
   verifiedOwner?: boolean;
   featured?: boolean;
@@ -134,18 +134,22 @@ export const ListingCard: React.FC<ListingCardProps> = ({
             </AppText>
           </View>
 
-          <View style={styles.ownerBox}>
-            <AppText variant="caption" color="textSecondary">
-              {ownerName}
-            </AppText>
-            <Avatar
-              initials={ownerName}
-              source={ownerAvatar ? { uri: ownerAvatar } : undefined}
-              size="xs"
-              verified={verifiedOwner}
-              style={styles.avatar}
-            />
-          </View>
+          {ownerName ? (
+            <View style={styles.ownerBox}>
+              <AppText variant="caption" color="textSecondary">
+                {ownerName}
+              </AppText>
+              <Avatar
+                initials={ownerName}
+                source={ownerAvatar ? { uri: ownerAvatar } : undefined}
+                size="xs"
+                verified={verifiedOwner}
+                style={styles.avatar}
+              />
+            </View>
+          ) : (
+            <View />
+          )}
         </View>
       </CardBody>
 
@@ -168,7 +172,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     overflow: 'hidden',
-    borderWidth: 0, // Make it feel lighter
+    borderWidth: 0,
     elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.04,
@@ -177,9 +181,9 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 4 / 3, // Airbnb style ratio
+    aspectRatio: 4 / 3,
     position: 'relative',
-    borderTopLeftRadius: theme.radius.lg, // Make card feel more premium
+    borderTopLeftRadius: theme.radius.lg,
     borderTopRightRadius: theme.radius.lg,
     overflow: 'hidden',
   },
@@ -198,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   favoriteButton: {
-    backgroundColor: 'rgba(255,255,255,0.9)', // Lighter, cleaner favorite button
+    backgroundColor: 'rgba(255,255,255,0.9)',
     padding: theme.spacing[6],
     borderRadius: theme.radius.full,
     elevation: 1,

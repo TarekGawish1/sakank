@@ -2,10 +2,18 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
-import { MOCK_LISTINGS } from '../mockData';
+import { ListingFeedItem } from '../../../../api/listings.api';
 
-export const FeaturedListingsSection: React.FC = () => {
-  const featured = MOCK_LISTINGS.filter(l => l.featured);
+interface FeaturedListingsSectionProps {
+  data: ListingFeedItem[];
+}
+
+export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = ({ data }) => {
+  const featured = data.filter(l => l.isFeatured).length > 0 
+    ? data.filter(l => l.isFeatured) 
+    : data.slice(0, 3);
+
+  if (featured.length === 0) return null;
 
   return (
     <View style={styles.container}>
@@ -21,7 +29,12 @@ export const FeaturedListingsSection: React.FC = () => {
         {featured.map(item => (
           <View key={item.id} style={styles.cardWrapper}>
             <ListingCard
-              {...item}
+              image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
+              title={item.title}
+              location={`${item.location.area}، ${item.location.city}`}
+              price={item.monthlyRent}
+              featured={item.isFeatured}
+              available={item.availabilityStatus === 'AVAILABLE'}
               onPress={() => {}}
               onFavoritePress={() => {}}
             />

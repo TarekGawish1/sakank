@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, SafeAreaView, View, ActivityIndicator } from 'react-native';
 import { theme } from '../../theme';
-import { AppText, ListingCard } from '../../components';
+import { AppText } from '../../components';
 import { HomeHeader } from './components/HomeHeader';
 import { QuickFilters } from './components/QuickFilters';
+import { FeaturedListingsSection } from './components/FeaturedListingsSection';
+import { NearbyListingsSection } from './components/NearbyListingsSection';
+import { RecommendedListingsSection } from './components/RecommendedListingsSection';
 import { ListingsApi, ListingFeedItem } from '../../api/listings.api';
 import { ApiError } from '../../api/errors';
 
@@ -61,21 +64,10 @@ export const HomeScreen: React.FC = () => {
     }
 
     return (
-      <View style={styles.listContainer}>
-        {listings.map((item) => (
-          <View key={item.id} style={styles.cardWrapper}>
-            <ListingCard
-              image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
-              title={item.title}
-              location={`${item.location.area}، ${item.location.city}`}
-              price={item.monthlyRent}
-              ownerName="مالك العقار" // Placeholder since feed doesn't include owner name
-              featured={item.isFeatured}
-              available={item.availabilityStatus === 'AVAILABLE'}
-              onPress={() => {}}
-            />
-          </View>
-        ))}
+      <View>
+        <FeaturedListingsSection data={listings} />
+        <NearbyListingsSection data={listings} />
+        <RecommendedListingsSection data={listings} />
       </View>
     );
   };
@@ -115,17 +107,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: theme.spacing[16],
     color: theme.colors.textSecondary,
-  },
-  errorText: {
-    textAlign: 'center',
-  },
-  listContainer: {
-    paddingHorizontal: theme.spacing[16],
-    paddingVertical: theme.spacing[24],
-    gap: theme.spacing[16],
-  },
-  cardWrapper: {
-    width: '100%',
   },
   bottomSpacer: {
     height: theme.spacing[40],

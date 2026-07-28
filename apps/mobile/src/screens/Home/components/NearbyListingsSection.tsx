@@ -2,11 +2,16 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
-import { MOCK_LISTINGS } from '../mockData';
+import { ListingFeedItem } from '../../../../api/listings.api';
 
-export const NearbyListingsSection: React.FC = () => {
-  // Mock taking some listings for nearby
-  const nearby = MOCK_LISTINGS.slice(0, 2);
+interface NearbyListingsSectionProps {
+  data: ListingFeedItem[];
+}
+
+export const NearbyListingsSection: React.FC<NearbyListingsSectionProps> = ({ data }) => {
+  const nearby = data.slice(0, 2);
+
+  if (nearby.length === 0) return null;
 
   return (
     <View style={styles.container}>
@@ -21,7 +26,12 @@ export const NearbyListingsSection: React.FC = () => {
         {nearby.map(item => (
           <ListingCard
             key={item.id}
-            {...item}
+            image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
+            title={item.title}
+            location={`${item.location.area}، ${item.location.city}`}
+            price={item.monthlyRent}
+            featured={item.isFeatured}
+            available={item.availabilityStatus === 'AVAILABLE'}
             onPress={() => {}}
             onFavoritePress={() => {}}
           />
