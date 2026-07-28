@@ -39,3 +39,12 @@ From the monorepo root:
 - **Prisma Client not found:** Ensure you have run `pnpm prisma generate` in `apps/api` after setting `DATABASE_URL`.
 - **Lint errors in shared packages:** Run `pnpm --filter @sakank/<package> build` if a package needs building, though our setup uses raw TS via Turborepo workspaces.
 - **Turborepo cache issues:** If builds are acting strange, use `pnpm turbo run <task> --force` to ignore the cache.
+
+## Developer Checklist
+- [ ] Cloned the repository.
+- [ ] Installed pnpm.
+- [ ] Ran `pnpm install`.
+- [ ] Created `.env` in `apps/api` and configured `DATABASE_URL`.
+- [ ] Ran `pnpm prisma generate`.
+- [ ] Verified `pnpm lint` and `pnpm typecheck` pass.
+- [ ] Read `docs/FIRST_DAY.md`.

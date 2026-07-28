@@ -28,11 +28,19 @@ Example: `feat(api): add stay request endpoints`
 - Ensure no business logic leaks into Prisma schemas.
 - Ensure proper use of the shared packages (`@sakank/types`, etc.).
 
+## Definition of Ready (DoR)
+- Ticket has a clear title and description.
+- Acceptance criteria are clearly defined.
+- Architectural dependencies (e.g., database changes) are reviewed.
+- UI/UX designs are attached (if applicable).
+
 ## Definition of Done (DoD)
 - Code implemented and tested locally.
-- Linting and type-checking pass.
-- Documentation updated (if applicable).
-- PR reviewed and approved.
+- Linting (`pnpm lint`) and type-checking (`pnpm typecheck`) pass successfully.
+- Cross-browser/device testing completed (if UI).
+- Documentation updated (READMEs, API guidelines, swagger, etc.).
+- Pull Request reviewed and approved by at least one core engineer.
+- No remaining `TODO`s that block production readiness.
 
 ## Architecture Rules
 - Use Domain-Driven Design (DDD) principles.
