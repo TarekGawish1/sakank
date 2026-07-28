@@ -1,14 +1,26 @@
 import React from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { AuthNavigator } from './AuthNavigator';
 import { MainNavigator } from './MainNavigator';
+import { useSession } from '../hooks/auth';
+import { theme } from '../theme';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+const SplashLoading = () => (
+  <View style={styles.splash}>
+    <ActivityIndicator size="large" color={theme.colors.brandPrimary} />
+  </View>
+);
+
 export const RootNavigator = () => {
-  // Mock authentication state (change to true to test Main App)
-  const isAuthenticated = false;
+  const { isAuthenticated, isLoadingSession } = useSession();
+
+  if (isLoadingSession) {
+    return <SplashLoading />;
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -20,3 +32,12 @@ export const RootNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  splash: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.surfaceDefault,
+  }
+});
