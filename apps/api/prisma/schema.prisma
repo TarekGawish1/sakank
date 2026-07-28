@@ -6,3 +6,73 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Governorate {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  name String @unique @map("name")
+
+  cities City[]
+
+  @@index([name], name: "idx_governorate_name")
+  @@map("governorate")
+}
+
+model City {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  name          String @map("name")
+  governorateId String @map("governorate_id")
+
+  governorate Governorate @relation(fields: [governorateId], references: [id])
+  areas       Area[]
+
+  @@unique([governorateId, name], name: "uq_city_governorate_name")
+  @@index([name], name: "idx_city_name")
+  @@index([governorateId], name: "idx_city_governorate_id")
+  @@map("city")
+}
+
+model Area {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  name   String @map("name")
+  cityId String @map("city_id")
+
+  city City @relation(fields: [cityId], references: [id])
+
+  @@unique([cityId, name], name: "uq_area_city_name")
+  @@index([name], name: "idx_area_name")
+  @@index([cityId], name: "idx_area_city_id")
+  @@map("area")
+}
+
+model University {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  name String @unique @map("name")
+
+  @@index([name], name: "idx_university_name")
+  @@map("university")
+}
