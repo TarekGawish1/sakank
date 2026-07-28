@@ -10,10 +10,21 @@ import { logger } from '~/utils/logger';
 import { env } from '~/config/env';
 import { errorHandler } from '~/middlewares/error';
 import { requestId } from '~/middlewares/requestId';
+
+// Module routes
 import { healthRoutes } from '~/modules/health/health.routes';
+import { authRoutes } from '~/modules/auth/auth.routes';
+import { usersRoutes } from '~/modules/users/users.routes';
+import { listingsRoutes, favoritesRoutes } from '~/modules/listings/listings.routes';
+import { stayRequestsRoutes } from '~/modules/stay-requests/stay-requests.routes';
+import { verificationRoutes } from '~/modules/verification/verification.routes';
+import { notificationsRoutes } from '~/modules/notifications/notifications.routes';
+import { adminRoutes } from '~/modules/admin/admin.routes';
+import { propertiesRouter } from '~/modules/properties/properties.routes';
 
 const app = express();
 
+// ── Security & Compression ──────────────────────────────────────────
 app.use(helmet());
 app.use(cors());
 app.use(compression());
@@ -22,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestId);
 
+// ── Logging ─────────────────────────────────────────────────────────
 app.use(
   pinoHttp({
     logger,
@@ -34,16 +46,39 @@ app.use(
   })
 );
 
-const limiter = rateLimit({
+// ── Rate Limiting ───────────────────────────────────────────────────
+const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 100,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
 });
-app.use(limiter);
+app.use(globalLimiter);
 
+// Aggressive rate limiter for auth routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+});
+
+// ── Routes ──────────────────────────────────────────────────────────
+// Health check (no prefix)
 app.use('/health', healthRoutes);
 
+// API v1 routes
+app.use('/api/v1/auth', authLimiter, authRoutes);
+app.use('/api/v1', usersRoutes); // /profile/student, /profile/avatar, /universities
+app.use('/api/v1/listings', listingsRoutes);
+app.use('/api/v1/favorites', favoritesRoutes);
+app.use('/api/v1/stay-requests', stayRequestsRoutes);
+app.use('/api/v1/verification', verificationRoutes);
+app.use('/api/v1/notifications', notificationsRoutes);
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/properties', propertiesRouter);
+
+// ── Error Handler (MUST be last) ────────────────────────────────────
 app.use(errorHandler);
 
 export { app };
