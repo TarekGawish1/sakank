@@ -58,12 +58,6 @@ export const OwnerCard: React.FC<OwnerCardProps> = ({ isLoggedIn = false }) => {
                 <AppText variant="label" weight="bold" color="textPrimary" style={styles.overlayText}>
                   قم بتسجيل الدخول للتواصل مع المالك
                 </AppText>
-                <Button 
-                  title="تسجيل الدخول" 
-                  size="small" 
-                  hierarchy="primary" 
-                  onPress={() => {}} 
-                />
               </View>
             </View>
           )}
