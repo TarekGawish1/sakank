@@ -1,0 +1,56 @@
+import React from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { theme } from '../../../../theme';
+import { Button, AppIcon } from '../../../../components';
+
+export const BottomCTA = () => {
+  return (
+    <View style={styles.container}>
+      <Pressable style={styles.shareBtn} onPress={() => {}}>
+        <AppIcon name="Share2" size="md" color="primary" />
+      </Pressable>
+      <View style={styles.primaryBtnContainer}>
+        <Button 
+          title="إرسال طلب سكن" 
+          hierarchy="primary" 
+          onPress={() => {}} 
+        />
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing[24],
+    paddingVertical: theme.spacing[16],
+    backgroundColor: theme.colors.surfaceDefault,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.borderSubtle,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: -5 },
+    elevation: 10,
+    gap: theme.spacing[16],
+  },
+  shareBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.borderSubtle,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.surfaceDefault,
+  },
+  primaryBtnContainer: {
+    flex: 1,
+  }
+});
