@@ -4,29 +4,39 @@ import { theme } from '../../../../theme';
 import { AppText, Button, AppIcon } from '../../../../components';
 
 interface SuccessCardProps {
-  onBackToLogin: () => void;
+  icon: string;
+  title: string;
+  description: string;
+  buttonTitle: string;
+  onAction: () => void;
 }
 
-export const SuccessCard: React.FC<SuccessCardProps> = ({ onBackToLogin }) => {
+export const SuccessCard: React.FC<SuccessCardProps> = ({ 
+  icon, 
+  title, 
+  description, 
+  buttonTitle, 
+  onAction 
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <AppIcon name="MailCheck" size="xl" color="success" />
+        <AppIcon name={icon as any} size="xl" color="success" />
       </View>
       
       <AppText variant="title1" weight="bold" color="textPrimary" style={styles.title}>
-        تم إرسال الرابط
+        {title}
       </AppText>
       
       <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.desc}>
-        تحقق من بريدك الإلكتروني لإكمال إعادة تعيين كلمة المرور.
+        {description}
       </AppText>
       
       <Button 
-        title="العودة لتسجيل الدخول" 
+        title={buttonTitle} 
         hierarchy="primary" 
         size="large"
-        onPress={onBackToLogin}
+        onPress={onAction}
         style={styles.btn}
       />
     </View>

@@ -7,3 +7,4 @@ export * from './MyRequests';
 export * from './Auth/Login';
 export * from './Auth/Register';
 export * from './Auth/ForgotPassword';
+export * from './Auth/VerifyEmail';

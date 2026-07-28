@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
-import { ForgotPasswordForm, SuccessCard } from './components';
-import { AuthHeader, Divider, ErrorBanner } from '../components';
+import { ForgotPasswordForm } from './components';
+import { AuthHeader, Divider, ErrorBanner, SuccessCard } from '../components';
 
 type ViewState = 'form' | 'loading' | 'success' | 'error';
 
@@ -22,7 +22,15 @@ export const ForgotPasswordScreen = () => {
 
   const renderContent = () => {
     if (viewState === 'success') {
-      return <SuccessCard onBackToLogin={() => setViewState('form')} />;
+      return (
+        <SuccessCard 
+          icon="MailCheck"
+          title="تم إرسال الرابط"
+          description="تحقق من بريدك الإلكتروني لإكمال إعادة تعيين كلمة المرور."
+          buttonTitle="العودة لتسجيل الدخول"
+          onAction={() => setViewState('form')} 
+        />
+      );
     }
 
     return (
