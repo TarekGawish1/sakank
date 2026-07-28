@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { theme } from '../../../../theme';
 import { AppText, Button, Input, AppIcon } from '../../../../components';
 
 interface LoginFormProps {
   isLoading?: boolean;
-  onSubmit: () => void;
+  onSubmit: (credentials: { email: string; password: string }) => void;
   onForgotPassword?: () => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit, onForgotPassword }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = () => {
+    if (!email || !password) return;
+    onSubmit({ email, password });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputs}>
@@ -20,6 +28,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit, onFor
           keyboardType="email-address"
           autoCapitalize="none"
           editable={!isLoading}
+          value={email}
+          onChangeText={setEmail}
         />
         
         <Input 
@@ -28,6 +38,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit, onFor
           isPassword
           leftSlot={<AppIcon name="Lock" size="sm" color="secondary" />}
           editable={!isLoading}
+          value={password}
+          onChangeText={setPassword}
         />
         
         <Pressable style={styles.forgotPassword} onPress={onForgotPassword}>
@@ -42,8 +54,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit, onFor
         hierarchy="primary" 
         size="large"
         loading={isLoading}
-        disabled={isLoading}
-        onPress={onSubmit}
+        disabled={isLoading || !email || !password}
+        onPress={handleSubmit}
         style={styles.submitBtn}
       />
     </View>

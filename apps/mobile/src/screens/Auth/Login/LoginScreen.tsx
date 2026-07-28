@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,23 +7,16 @@ import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 import { LoginForm } from './components';
 import { AuthHeader, SocialLoginSection, Divider, ErrorBanner } from '../components';
+import { useLogin } from '../../../hooks/auth';
 
 type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export const LoginScreen = () => {
   const navigation = useNavigation<AuthNavigationProp>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const { mutate: login, isPending, error } = useLogin();
 
-  const handleLogin = () => {
-    // UI Mock
-    setHasError(false);
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setHasError(true);
-    }, 1500);
+  const handleLogin = (credentials: { email: string; password: string }) => {
+    login(credentials);
   };
 
   return (
@@ -42,12 +35,12 @@ export const LoginScreen = () => {
             subtitle="سجل دخولك للوصول إلى حسابك."
           />
           
-          {hasError && (
-            <ErrorBanner message="البريد الإلكتروني أو كلمة المرور غير صحيحة." />
+          {error && (
+            <ErrorBanner message={error.message} />
           )}
 
           <LoginForm 
-            isLoading={isLoading} 
+            isLoading={isPending} 
             onSubmit={handleLogin} 
             onForgotPassword={() => navigation.navigate('ForgotPassword')}
           />
