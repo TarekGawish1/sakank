@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill as any,
     padding: theme.spacing[12],
     justifyContent: 'space-between',
   },
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.full,
   },
   unavailableOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill as any,
     backgroundColor: 'rgba(255,255,255,0.6)',
     justifyContent: 'center',
     alignItems: 'center',

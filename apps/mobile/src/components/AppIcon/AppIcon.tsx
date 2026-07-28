@@ -1,6 +1,6 @@
 import React from 'react';
 import { I18nManager, View, ViewStyle, StyleProp } from 'react-native';
-import { icons } from 'lucide-react-native';
+import * as icons from 'lucide-react-native';
 import { theme } from '../../theme';
 
 export type IconName = keyof typeof icons;
@@ -83,7 +83,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
   
   if (!IconComponent) {
     if (__DEV__) {
-      console.warn(`[AppIcon] Icon "${name}" does not exist in lucide-react-native.`);
+      console.warn(`[AppIcon] Icon "${String(name)}" does not exist in lucide-react-native.`);
     }
     return null;
   }
@@ -92,7 +92,7 @@ export const AppIcon: React.FC<AppIconProps> = ({
   const resolvedColor = getColorValue(color);
   
   // RTL mirror support
-  const shouldMirror = I18nManager.isRTL && rtlMirrorIcons.has(name);
+  const shouldMirror = I18nManager.isRTL && rtlMirrorIcons.has(String(name));
   const mirrorStyle: StyleProp<ViewStyle> = shouldMirror ? { transform: [{ scaleX: -1 }] } : {};
 
   return (

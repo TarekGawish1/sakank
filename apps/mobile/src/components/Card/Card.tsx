@@ -58,7 +58,7 @@ export const Card: React.FC<CardProps> = ({
           ...baseStyle,
           backgroundColor: pressed ? theme.colors.surfaceSubdued : theme.colors.surfaceDefault,
           borderWidth: 1,
-          borderColor: theme.colors.borderDefault,
+          borderColor: theme.colors.borderSubtle,
         };
         break;
       case 'filled':

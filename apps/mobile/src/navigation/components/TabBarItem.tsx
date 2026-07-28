@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, View, StyleSheet } from 'react-native';
-import { theme } from '../../../theme';
-import { AppText, AppIcon, IconName } from '../../../components';
+import { theme } from '../../theme';
+import { AppText, AppIcon, IconName } from '../../components';
 
 export interface TabBarItemProps {
   label: string;

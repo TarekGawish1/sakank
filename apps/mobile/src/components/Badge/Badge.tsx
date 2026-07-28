@@ -121,7 +121,7 @@ export const Badge: React.FC<BadgeProps> = ({
   
   switch (size) {
     case 'lg':
-      paddingV = theme.spacing[6] || 6;
+      paddingV = 6;
       paddingH = theme.spacing[12];
       typographyVariant = 'bodySm';
       break;
@@ -132,8 +132,8 @@ export const Badge: React.FC<BadgeProps> = ({
       break;
     case 'sm':
     default:
-      paddingV = theme.spacing[2] || 2;
-      paddingH = theme.spacing[6] || 6;
+      paddingV = 2;
+      paddingH = 6;
       typographyVariant = 'caption';
       break;
   }
