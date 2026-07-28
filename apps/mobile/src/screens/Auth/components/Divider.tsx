@@ -3,13 +3,19 @@ import { View, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 
-export const Divider = () => {
+interface DividerProps {
+  text?: string;
+}
+
+export const Divider: React.FC<DividerProps> = ({ text = 'أو' }) => {
   return (
     <View style={styles.container}>
       <View style={styles.line} />
-      <AppText variant="caption" color="textSecondary" style={styles.text}>
-        أو
-      </AppText>
+      {text ? (
+        <AppText variant="caption" color="textSecondary" style={styles.text}>
+          {text}
+        </AppText>
+      ) : null}
       <View style={styles.line} />
     </View>
   );

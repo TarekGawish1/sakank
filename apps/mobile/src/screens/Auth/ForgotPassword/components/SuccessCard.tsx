@@ -1,0 +1,63 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { theme } from '../../../../theme';
+import { AppText, Button, AppIcon } from '../../../../components';
+
+interface SuccessCardProps {
+  onBackToLogin: () => void;
+}
+
+export const SuccessCard: React.FC<SuccessCardProps> = ({ onBackToLogin }) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.iconContainer}>
+        <AppIcon name="MailCheck" size="xl" color="success" />
+      </View>
+      
+      <AppText variant="title1" weight="bold" color="textPrimary" style={styles.title}>
+        تم إرسال الرابط
+      </AppText>
+      
+      <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.desc}>
+        تحقق من بريدك الإلكتروني لإكمال إعادة تعيين كلمة المرور.
+      </AppText>
+      
+      <Button 
+        title="العودة لتسجيل الدخول" 
+        hierarchy="primary" 
+        size="large"
+        onPress={onBackToLogin}
+        style={styles.btn}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: theme.spacing[32],
+    marginTop: theme.spacing[40],
+  },
+  iconContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: theme.colors.surfaceSuccess,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing[24],
+  },
+  title: {
+    marginBottom: theme.spacing[12],
+    textAlign: 'center',
+  },
+  desc: {
+    marginBottom: theme.spacing[40],
+  },
+  btn: {
+    width: '100%',
+  }
+});
