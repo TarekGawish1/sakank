@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { I18nManager, View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { Alexandria_400Regular, Alexandria_500Medium, Alexandria_600SemiBold, Alexandria_700Bold } from '@expo-google-fonts/alexandria';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { AppProviders } from './src/providers';
 import { theme } from './src/theme';
 
 export default function App() {
@@ -41,11 +40,9 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <RootNavigator />
-        <StatusBar style="dark" />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <AppProviders>
+      <RootNavigator />
+      <StatusBar style="dark" />
+    </AppProviders>
   );
 }
