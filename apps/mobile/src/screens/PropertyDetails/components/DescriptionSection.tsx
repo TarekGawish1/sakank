@@ -2,9 +2,16 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
+import { ListingDetails } from '../../../api/listings.api';
 
-export const DescriptionSection = () => {
+interface DescriptionSectionProps {
+  listing: ListingDetails;
+}
+
+export const DescriptionSection: React.FC<DescriptionSectionProps> = ({ listing }) => {
   const [expanded, setExpanded] = useState(false);
+
+  if (!listing.description) return null;
 
   return (
     <View style={styles.container}>
@@ -18,14 +25,16 @@ export const DescriptionSection = () => {
         style={styles.text}
         numberOfLines={expanded ? undefined : 3}
       >
-        تتميز هذه الفيلا الفاخرة بتصميمها العصري وموقعها الاستراتيجي في قلب حي الملقا. تتكون الفيلا من دورين وملحق، وتضم 5 غرف نوم فسيحة، و4 دورات مياه مصممة بأحدث التشطيبات. كما تحتوي على مطبخ راكب بالكامل وتكييف مركزي، وموقف يتسع لسيارتين، بالإضافة إلى حديقة خلفية صغيرة مثالية للجلسات العائلية.
+        {listing.description}
       </AppText>
 
-      <Pressable onPress={() => setExpanded(!expanded)} style={styles.button} hitSlop={10}>
-        <AppText variant="label" color="brandPrimary" weight="bold">
-          {expanded ? 'عرض أقل' : 'قراءة المزيد'}
-        </AppText>
-      </Pressable>
+      {listing.description.length > 100 && (
+        <Pressable onPress={() => setExpanded(!expanded)} style={styles.button} hitSlop={10}>
+          <AppText variant="label" color="brandPrimary" weight="bold">
+            {expanded ? 'عرض أقل' : 'قراءة المزيد'}
+          </AppText>
+        </Pressable>
+      )}
     </View>
   );
 };

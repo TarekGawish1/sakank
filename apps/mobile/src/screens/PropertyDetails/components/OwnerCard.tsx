@@ -2,12 +2,16 @@ import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, Card, CardBody, AppIcon, Button } from '../../../components';
+import { ListingDetails } from '../../../api/listings.api';
 
 interface OwnerCardProps {
+  listing: ListingDetails;
   isLoggedIn?: boolean;
 }
 
-export const OwnerCard: React.FC<OwnerCardProps> = ({ isLoggedIn = false }) => {
+export const OwnerCard: React.FC<OwnerCardProps> = ({ listing, isLoggedIn = false }) => {
+  if (!listing.owner) return null;
+
   return (
     <View style={styles.container}>
       <Card variant="elevated" radius="lg">
@@ -16,16 +20,16 @@ export const OwnerCard: React.FC<OwnerCardProps> = ({ isLoggedIn = false }) => {
           <View style={[styles.contentWrapper, !isLoggedIn && styles.blurredContent]}>
             <View style={styles.header}>
               <Image 
-                source={{ uri: 'https://i.pravatar.cc/150?img=11' }} 
+                source={{ uri: listing.owner.avatar || 'https://i.pravatar.cc/150?img=11' }} 
                 style={styles.avatar} 
               />
               <View style={styles.info}>
                 <View style={styles.nameRow}>
-                  <AppText variant="label" color="textPrimary" weight="bold">أحمد عبدالله</AppText>
+                  <AppText variant="label" color="textPrimary" weight="bold">{listing.owner.name}</AppText>
                   <AppIcon name="BadgeCheck" size="sm" color="success" />
                 </View>
                 <AppText variant="caption" color="textSecondary">
-                  عضو منذ 2021 • 15 عقار
+                  تقييم: {listing.owner.rating} • استجابة: {listing.owner.responseRate}
                 </AppText>
               </View>
             </View>

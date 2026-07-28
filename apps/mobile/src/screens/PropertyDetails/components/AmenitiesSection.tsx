@@ -3,17 +3,29 @@ import { View, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, AppIcon } from '../../../components';
 import { IconName } from '../../../components/AppIcon';
+import { ListingDetails } from '../../../api/listings.api';
 
-const AMENITIES: { id: string, name: string, icon: IconName }[] = [
-  { id: '1', name: 'واي فاي', icon: 'Wifi' },
-  { id: '2', name: 'تكييف', icon: 'Wind' },
-  { id: '3', name: 'مصعد', icon: 'ArrowUpCircle' },
-  { id: '4', name: 'مطبخ', icon: 'Coffee' },
-  { id: '5', name: 'حراسة', icon: 'Shield' },
-  { id: '6', name: 'مواقف', icon: 'Car' },
-];
+// Helper to map backend amenities to icons
+const getAmenityIcon = (name: string): IconName => {
+  const lowercaseName = name.toLowerCase();
+  if (lowercaseName.includes('wifi') || lowercaseName.includes('إنترنت')) return 'Wifi';
+  if (lowercaseName.includes('ac') || lowercaseName.includes('تكييف')) return 'Wind';
+  if (lowercaseName.includes('elevator') || lowercaseName.includes('مصعد')) return 'ArrowUpCircle';
+  if (lowercaseName.includes('kitchen') || lowercaseName.includes('مطبخ')) return 'Coffee';
+  if (lowercaseName.includes('security') || lowercaseName.includes('حراسة')) return 'Shield';
+  if (lowercaseName.includes('parking') || lowercaseName.includes('مواقف')) return 'Car';
+  return 'CheckCircle';
+};
 
-export const AmenitiesSection = () => {
+interface AmenitiesSectionProps {
+  listing: ListingDetails;
+}
+
+export const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ listing }) => {
+  const amenities = listing.amenities || [];
+
+  if (amenities.length === 0) return null;
+
   return (
     <View style={styles.container}>
       <AppText variant="title2" color="textPrimary" weight="bold" style={styles.title}>
@@ -21,13 +33,13 @@ export const AmenitiesSection = () => {
       </AppText>
       
       <View style={styles.grid}>
-        {AMENITIES.map((item) => (
-          <View key={item.id} style={styles.amenityItem}>
+        {amenities.map((item, index) => (
+          <View key={index} style={styles.amenityItem}>
             <View style={styles.iconContainer}>
-              <AppIcon name={item.icon} size="sm" color="primary" />
+              <AppIcon name={getAmenityIcon(item)} size="sm" color="primary" />
             </View>
             <AppText variant="bodySm" color="textSecondary" align="center">
-              {item.name}
+              {item}
             </AppText>
           </View>
         ))}

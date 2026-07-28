@@ -3,14 +3,20 @@ import { View, Image, StyleSheet, Pressable, Platform, StatusBar } from 'react-n
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppIcon } from '../../../components';
+import { ListingDetails } from '../../../api/listings.api';
 
-export const PropertyGallery = () => {
+interface PropertyGalleryProps {
+  listing: ListingDetails;
+}
+
+export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ listing }) => {
   const navigation = useNavigation();
+  const imageUri = listing.images?.[0] || listing.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
 
   return (
     <View style={styles.container}>
       <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' }} 
+        source={{ uri: imageUri }} 
         style={styles.image} 
         resizeMode="cover"
       />

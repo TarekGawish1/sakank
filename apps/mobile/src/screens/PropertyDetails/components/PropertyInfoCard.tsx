@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, Card, CardBody, AppIcon } from '../../../components';
 import { IconName } from '../../../components/AppIcon';
+import { ListingDetails } from '../../../api/listings.api';
 
 const InfoItem = ({ icon, label, value }: { icon: IconName, label: string, value: string | number }) => (
   <View style={styles.infoItem}>
@@ -14,18 +15,20 @@ const InfoItem = ({ icon, label, value }: { icon: IconName, label: string, value
   </View>
 );
 
-export const PropertyInfoCard = () => {
+interface PropertyInfoCardProps {
+  listing: ListingDetails;
+}
+
+export const PropertyInfoCard: React.FC<PropertyInfoCardProps> = ({ listing }) => {
   return (
     <View style={styles.container}>
       <Card variant="outlined" radius="lg">
         <CardBody style={styles.cardBody}>
-          <InfoItem icon="BedDouble" label="غرف النوم" value={5} />
+          <InfoItem icon="Users" label="الاستيعاب" value={listing.capacity || 1} />
           <View style={styles.divider} />
-          <InfoItem icon="Bath" label="دورات المياه" value={4} />
+          <InfoItem icon="BedDouble" label="أسرة متاحة" value={listing.availableBeds || 0} />
           <View style={styles.divider} />
-          <InfoItem icon="Maximize" label="المساحة" value="350 م²" />
-          <View style={styles.divider} />
-          <InfoItem icon="Layers" label="الطابق" value="أرضي" />
+          <InfoItem icon="User" label="المخصصة لـ" value={listing.genderRestriction === 'MALE' ? 'رجال' : listing.genderRestriction === 'FEMALE' ? 'نساء' : 'الجميع'} />
         </CardBody>
       </Card>
     </View>

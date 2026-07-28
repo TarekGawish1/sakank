@@ -23,6 +23,21 @@ export interface ListingFeedItem {
   createdAt: string;
 }
 
+export interface ListingDetails extends ListingFeedItem {
+  images: string[];
+  amenities: string[];
+  owner: {
+    id: string;
+    name: string;
+    avatar: string | null;
+    rating: number;
+    responseRate: string;
+    joinedDate: string;
+  };
+  latitude?: number;
+  longitude?: number;
+}
+
 export interface ListingsResponse {
   items: ListingFeedItem[];
   meta: {
@@ -41,9 +56,9 @@ export const ListingsApi = {
     };
   },
 
-  getListingById: async (id: string): Promise<any> => {
-    // return apiClient.get(`${ENDPOINTS.LISTINGS.BASE}/${id}`);
-    throw new Error('Not implemented');
+  getListingById: async (id: string): Promise<ListingDetails> => {
+    const response = await apiClient.get<ApiResponse<ListingDetails>>(`${ENDPOINTS.LISTINGS.BASE}/${id}`);
+    return response.data;
   },
 
   getRelatedListings: async (id: string): Promise<any> => {
