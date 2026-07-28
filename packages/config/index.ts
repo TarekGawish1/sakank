@@ -1,0 +1,1 @@
+// @sakank/config entry point

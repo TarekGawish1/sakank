@@ -1,0 +1,11 @@
+{
+  "name": "@sakank/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Running dev'",
+    "build": "echo 'Building'",
+    "lint": "echo 'Linting'",
+    "typecheck": "echo 'Typechecking'"
+  }
+}
