@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../navigation/types';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 import { ForgotPasswordForm } from './components';
 import { AuthHeader, Divider, ErrorBanner, SuccessCard } from '../components';
 
+type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 type ViewState = 'form' | 'loading' | 'success' | 'error';
 
 export const ForgotPasswordScreen = () => {
+  const navigation = useNavigation<AuthNavigationProp>();
   const [viewState, setViewState] = useState<ViewState>('form');
 
   const handleSubmit = () => {
@@ -28,7 +33,7 @@ export const ForgotPasswordScreen = () => {
           title="تم إرسال الرابط"
           description="تحقق من بريدك الإلكتروني لإكمال إعادة تعيين كلمة المرور."
           buttonTitle="العودة لتسجيل الدخول"
-          onAction={() => setViewState('form')} 
+          onAction={() => navigation.navigate('Login')} 
         />
       );
     }
@@ -56,7 +61,7 @@ export const ForgotPasswordScreen = () => {
           <AppText variant="bodySm" color="textSecondary">
             تذكرت كلمة المرور؟
           </AppText>
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={() => navigation.navigate('Login')}>
             <AppText variant="bodySm" color="brandPrimary" weight="bold">
               {' '}تسجيل الدخول
             </AppText>

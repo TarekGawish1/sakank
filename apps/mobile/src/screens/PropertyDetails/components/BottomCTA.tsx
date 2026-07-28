@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '../../../../navigation/types';
 import { theme } from '../../../theme';
 import { Button, AppIcon } from '../../../components';
 
@@ -7,7 +10,10 @@ interface BottomCTAProps {
   isLoggedIn?: boolean;
 }
 
+type PropertyDetailsNavProp = NativeStackNavigationProp<HomeStackParamList>;
+
 export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false }) => {
+  const navigation = useNavigation<PropertyDetailsNavProp>();
   return (
     <View style={styles.container}>
       <Pressable style={styles.shareBtn} onPress={() => {}}>
@@ -18,7 +24,7 @@ export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false }) => {
           title={isLoggedIn ? "إرسال طلب سكن" : "تسجيل الدخول للطلب"} 
           hierarchy="primary" 
           leadingIcon={!isLoggedIn ? <AppIcon name="Lock" size="sm" color="inverse" /> : undefined}
-          onPress={() => {}} 
+          onPress={() => navigation.navigate('StayRequest')} 
         />
       </View>
     </View>

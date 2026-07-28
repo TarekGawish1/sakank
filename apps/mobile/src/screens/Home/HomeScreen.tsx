@@ -24,7 +24,7 @@ export const HomeScreen: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await ListingsApi.getListings();
+      const response = await ListingsApi.getListings({ _t: Date.now() });
       setListings(response.items || []);
     } catch (err: any) {
       if (err instanceof ApiError) {

@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
-import { AppText, ListingCard } from '../../../components';
+import { AppText, ListingCard, AppIcon } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
 import { RootStackParamList } from '../../../../navigation/RootNavigator';
 
@@ -12,34 +12,40 @@ interface NearbyListingsSectionProps {
 
 export const NearbyListingsSection: React.FC<NearbyListingsSectionProps> = ({ data }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const nearby = data.slice(0, 2);
+  const nearby = data.slice(3, 8);
 
   if (nearby.length === 0) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerText}>
           <AppText variant="title2" color="textPrimary">بالقرب منك</AppText>
-          <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>عقارات قريبة من موقعك الحالي</AppText>
         </View>
-        <AppText variant="bodyBase" color="textBrand">عرض الكل</AppText>
+        <Pressable style={styles.arrowButton}>
+          <AppIcon name="ArrowLeft" size="sm" color="textPrimary" />
+        </Pressable>
       </View>
-      <View style={styles.list}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+      >
         {nearby.map(item => (
-          <ListingCard
-            key={item.id}
-            image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
-            title={item.title}
-            location={`${item.location.area}، ${item.location.city}`}
-            price={item.monthlyRent}
-            featured={item.isFeatured}
-            available={item.availabilityStatus === 'AVAILABLE'}
-            onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
-            onFavoritePress={() => {}}
-          />
+          <View key={item.id} style={styles.cardWrapper}>
+            <ListingCard
+              image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
+              title={item.title}
+              location={`${item.location.area}، ${item.location.city}`}
+              price={item.monthlyRent}
+              available={item.availabilityStatus === 'AVAILABLE'}
+              imageAspectRatio={1}
+              onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
+              onFavoritePress={() => {}}
+            />
+          </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -50,16 +56,24 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
     paddingHorizontal: theme.spacing[16],
     marginBottom: theme.spacing[16],
   },
-  subtitle: {
-    marginTop: theme.spacing[4],
+  headerText: {
+    flex: 1,
+  },
+  arrowButton: {
+    padding: theme.spacing[8],
+    backgroundColor: theme.colors.surfaceNeutral,
+    borderRadius: theme.radius.full,
   },
   list: {
     paddingHorizontal: theme.spacing[16],
-    gap: theme.spacing[16],
+    gap: theme.spacing[12],
+  },
+  cardWrapper: {
+    width: 160,
   },
 });

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '../../navigation/types';
 import { theme } from '../../theme';
 import { AppText, Card, AppIcon, Button } from '../../components';
 import {
@@ -13,8 +16,10 @@ import {
 } from './components';
 
 type ViewState = 'loading' | 'error' | 'form' | 'success';
+type StayRequestNavProp = NativeStackNavigationProp<HomeStackParamList>;
 
 export const StayRequestScreen: React.FC = () => {
+  const navigation = useNavigation<StayRequestNavProp>();
   const [viewState, setViewState] = useState<ViewState>('form');
 
   const handleSubmit = () => {
@@ -59,7 +64,7 @@ export const StayRequestScreen: React.FC = () => {
     }
 
     if (viewState === 'success') {
-      return <SuccessState onBackToHome={() => {}} />;
+      return <SuccessState onBackToHome={() => navigation.popToTop()} />;
     }
 
     return (
@@ -85,7 +90,7 @@ export const StayRequestScreen: React.FC = () => {
         
         <BottomCTA 
           onSubmit={handleSubmit}
-          onCancel={() => {}} 
+          onCancel={() => navigation.goBack()} 
         />
       </View>
     );

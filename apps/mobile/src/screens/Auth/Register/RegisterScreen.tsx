@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../navigation/types';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 import { RegisterForm } from './components';
 import { AuthHeader, SocialLoginSection, Divider, ErrorBanner } from '../components';
 
+type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+
 export const RegisterScreen = () => {
+  const navigation = useNavigation<AuthNavigationProp>();
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -50,7 +56,7 @@ export const RegisterScreen = () => {
             <AppText variant="bodySm" color="textSecondary">
               لديك حساب بالفعل؟
             </AppText>
-            <Pressable onPress={() => {}}>
+            <Pressable onPress={() => navigation.navigate('Login')}>
               <AppText variant="bodySm" color="brandPrimary" weight="bold">
                 {' '}تسجيل الدخول
               </AppText>

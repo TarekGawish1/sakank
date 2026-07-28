@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../navigation/types';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 import { LoginForm } from './components';
 import { AuthHeader, SocialLoginSection, Divider, ErrorBanner } from '../components';
 
+type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
+
 export const LoginScreen = () => {
+  const navigation = useNavigation<AuthNavigationProp>();
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -40,7 +46,11 @@ export const LoginScreen = () => {
             <ErrorBanner message="البريد الإلكتروني أو كلمة المرور غير صحيحة." />
           )}
 
-          <LoginForm isLoading={isLoading} onSubmit={handleLogin} />
+          <LoginForm 
+            isLoading={isLoading} 
+            onSubmit={handleLogin} 
+            onForgotPassword={() => navigation.navigate('ForgotPassword')}
+          />
           
           <Divider />
           
@@ -50,7 +60,7 @@ export const LoginScreen = () => {
             <AppText variant="bodySm" color="textSecondary">
               ليس لديك حساب؟
             </AppText>
-            <Pressable onPress={() => {}}>
+            <Pressable onPress={() => navigation.navigate('Register')}>
               <AppText variant="bodySm" color="brandPrimary" weight="bold">
                 {' '}إنشاء حساب
               </AppText>

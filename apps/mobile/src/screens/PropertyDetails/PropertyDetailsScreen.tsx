@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '../../navigation/types';
 import { theme } from '../../theme';
 import { AppText, Button, Card, AppIcon } from '../../components';
 
@@ -16,9 +18,11 @@ import {
 } from './components';
 
 type ViewState = 'loading' | 'error' | 'empty' | 'data';
+type PropertyDetailsNavProp = NativeStackNavigationProp<HomeStackParamList>;
 
 export const PropertyDetailsScreen: React.FC = () => {
   const route = useRoute();
+  const navigation = useNavigation<PropertyDetailsNavProp>();
   const { listingId } = (route.params as { listingId?: string }) || {};
 
   const [viewState, setViewState] = useState<ViewState>('data');

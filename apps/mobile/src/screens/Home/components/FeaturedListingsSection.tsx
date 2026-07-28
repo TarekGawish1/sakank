@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
-import { AppText, ListingCard } from '../../../components';
+import { AppText, ListingCard, AppIcon } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
 import { RootStackParamList } from '../../../../navigation/RootNavigator';
 
@@ -15,15 +15,22 @@ export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = (
   
   const featured = data.filter(l => l.isFeatured).length > 0 
     ? data.filter(l => l.isFeatured) 
-    : data.slice(0, 3);
+    : data.slice(0, 5);
 
   if (featured.length === 0) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AppText variant="title2" color="textPrimary">عقارات مميزة</AppText>
-        <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>اكتشف أفضل السكنات المختارة</AppText>
+        <View style={styles.headerText}>
+          <AppText variant="title2" color="textPrimary">عقارات مميزة</AppText>
+          <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>
+            اكتشف أفضل السكنات المختارة
+          </AppText>
+        </View>
+        <Pressable style={styles.arrowButton}>
+          <AppIcon name="ArrowLeft" size="sm" color="textPrimary" />
+        </Pressable>
       </View>
       <ScrollView
         horizontal
@@ -39,6 +46,7 @@ export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = (
               price={item.monthlyRent}
               featured={item.isFeatured}
               available={item.availabilityStatus === 'AVAILABLE'}
+              imageAspectRatio={1}
               onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
               onFavoritePress={() => {}}
             />
@@ -54,17 +62,28 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing[24],
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: theme.spacing[16],
     marginBottom: theme.spacing[16],
   },
+  headerText: {
+    flex: 1,
+  },
+  arrowButton: {
+    padding: theme.spacing[8],
+    backgroundColor: theme.colors.surfaceNeutral,
+    borderRadius: theme.radius.full,
+  },
   subtitle: {
-    marginTop: theme.spacing[4],
+    marginTop: theme.spacing[2],
   },
   list: {
     paddingHorizontal: theme.spacing[16],
-    gap: theme.spacing[16],
+    gap: theme.spacing[12],
   },
   cardWrapper: {
-    width: 320,
+    width: 160,
   },
 });

@@ -6,9 +6,10 @@ import { AppText, Button, Input, AppIcon } from '../../../../components';
 interface LoginFormProps {
   isLoading?: boolean;
   onSubmit: () => void;
+  onForgotPassword?: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit, onForgotPassword }) => {
   return (
     <View style={styles.container}>
       <View style={styles.inputs}>
@@ -29,7 +30,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isLoading, onSubmit }) => 
           editable={!isLoading}
         />
         
-        <Pressable style={styles.forgotPassword}>
+        <Pressable style={styles.forgotPassword} onPress={onForgotPassword}>
           <AppText variant="label" weight="medium" color="brandPrimary">
             نسيت كلمة المرور؟
           </AppText>
