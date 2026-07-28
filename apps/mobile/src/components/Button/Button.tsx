@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Pressable,
-  Text,
   StyleSheet,
   ActivityIndicator,
   ViewStyle,
@@ -10,6 +9,7 @@ import {
   I18nManager,
 } from 'react-native';
 import { theme } from '../../theme';
+import { AppText, SemanticColor } from '../AppText';
 
 export type ButtonHierarchy = 'primary' | 'secondary' | 'tertiary' | 'text';
 export type ButtonSize = 'large' | 'medium';
@@ -46,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
   // Determine styles based on hierarchy
   const getHierarchyStyles = (
     pressed: boolean
-  ): { container: ViewStyle; text: TextStyle; loaderColor: string } => {
+  ): { container: ViewStyle; textColor: SemanticColor; loaderColor: string } => {
     switch (hierarchy) {
       case 'secondary':
         return {
@@ -57,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
             borderColor: theme.colors.borderStrong,
             borderWidth: 1,
           },
-          text: { color: theme.colors.textPrimary },
+          textColor: 'textPrimary',
           loaderColor: theme.colors.textPrimary,
         };
       case 'tertiary':
@@ -68,7 +68,7 @@ export const Button: React.FC<ButtonProps> = ({
               : theme.colors.surfaceSubdued,
             borderWidth: 0,
           },
-          text: { color: theme.colors.textBrand },
+          textColor: 'textBrand',
           loaderColor: theme.colors.textBrand,
         };
       case 'text':
@@ -79,7 +79,7 @@ export const Button: React.FC<ButtonProps> = ({
               : 'transparent',
             borderWidth: 0,
           },
-          text: { color: theme.colors.textBrand },
+          textColor: 'textBrand',
           loaderColor: theme.colors.textBrand,
         };
       case 'primary':
@@ -91,7 +91,7 @@ export const Button: React.FC<ButtonProps> = ({
               : theme.colors.surfacePrimary,
             borderWidth: 0,
           },
-          text: { color: theme.colors.textInverse },
+          textColor: 'textInverse',
           loaderColor: theme.colors.textInverse,
         };
     }
@@ -153,17 +153,18 @@ export const Button: React.FC<ButtonProps> = ({
               <React.Fragment>{leadingIcon}</React.Fragment>
             ) : null}
 
-            <Text
+            <AppText
+              variant="button"
+              color={hierarchyStyles.textColor}
+              align="center"
               style={[
-                styles.baseText,
-                hierarchyStyles.text,
                 isDisabled && styles.disabledText,
                 textStyle,
               ]}
               numberOfLines={1}
             >
               {title}
-            </Text>
+            </AppText>
 
             {!loading && trailingIcon ? (
               <React.Fragment>{trailingIcon}</React.Fragment>
@@ -182,10 +183,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: theme.radius.md,
     gap: theme.spacing[8],
-  },
-  baseText: {
-    ...theme.typography.button,
-    textAlign: 'center',
   },
   disabledContainer: {
     opacity: theme.opacity.disabled,
