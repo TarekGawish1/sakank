@@ -3,7 +3,11 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { theme } from '../../../theme';
 import { Button, AppIcon } from '../../../components';
 
-export const BottomCTA = () => {
+interface BottomCTAProps {
+  isLoggedIn?: boolean;
+}
+
+export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false }) => {
   return (
     <View style={styles.container}>
       <Pressable style={styles.shareBtn} onPress={() => {}}>
@@ -11,8 +15,9 @@ export const BottomCTA = () => {
       </Pressable>
       <View style={styles.primaryBtnContainer}>
         <Button 
-          title="إرسال طلب سكن" 
+          title={isLoggedIn ? "إرسال طلب سكن" : "تسجيل الدخول للطلب"} 
           hierarchy="primary" 
+          leadingIcon={!isLoggedIn ? <AppIcon name="Lock" size="sm" color="inverse" /> : undefined}
           onPress={() => {}} 
         />
       </View>
