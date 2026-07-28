@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
+import { RootStackParamList } from '../../../../navigation/RootNavigator';
 
 interface RecommendedListingsSectionProps {
   data: ListingFeedItem[];
 }
 
 export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProps> = ({ data }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const recommended = data.slice(2, 5);
 
   if (recommended.length === 0) return null;
@@ -29,7 +32,7 @@ export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProp
             price={item.monthlyRent}
             featured={item.isFeatured}
             available={item.availabilityStatus === 'AVAILABLE'}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
             onFavoritePress={() => {}}
           />
         ))}

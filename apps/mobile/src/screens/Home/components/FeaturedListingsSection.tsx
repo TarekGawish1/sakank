@@ -1,14 +1,18 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
+import { RootStackParamList } from '../../../../navigation/RootNavigator';
 
 interface FeaturedListingsSectionProps {
   data: ListingFeedItem[];
 }
 
 export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = ({ data }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  
   const featured = data.filter(l => l.isFeatured).length > 0 
     ? data.filter(l => l.isFeatured) 
     : data.slice(0, 3);
@@ -35,7 +39,7 @@ export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = (
               price={item.monthlyRent}
               featured={item.isFeatured}
               available={item.availabilityStatus === 'AVAILABLE'}
-              onPress={() => {}}
+              onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
               onFavoritePress={() => {}}
             />
           </View>

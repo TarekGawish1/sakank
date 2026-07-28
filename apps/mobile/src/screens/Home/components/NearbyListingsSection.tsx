@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
+import { RootStackParamList } from '../../../../navigation/RootNavigator';
 
 interface NearbyListingsSectionProps {
   data: ListingFeedItem[];
 }
 
 export const NearbyListingsSection: React.FC<NearbyListingsSectionProps> = ({ data }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const nearby = data.slice(0, 2);
 
   if (nearby.length === 0) return null;
@@ -32,7 +35,7 @@ export const NearbyListingsSection: React.FC<NearbyListingsSectionProps> = ({ da
             price={item.monthlyRent}
             featured={item.isFeatured}
             available={item.availabilityStatus === 'AVAILABLE'}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
             onFavoritePress={() => {}}
           />
         ))}

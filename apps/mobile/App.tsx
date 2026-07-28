@@ -8,7 +8,7 @@ import { useFonts } from 'expo-font';
 import { Alexandria_400Regular, Alexandria_500Medium, Alexandria_600SemiBold, Alexandria_700Bold } from '@expo-google-fonts/alexandria';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 
-import { MainTabNavigator } from './src/navigation/MainTabNavigator';
+import { RootNavigator } from './src/navigation/RootNavigator';
 import { theme } from './src/theme';
 
 export default function App() {
@@ -43,7 +43,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <MainTabNavigator />
+        <RootNavigator />
         <StatusBar style="dark" />
       </NavigationContainer>
     </SafeAreaProvider>
