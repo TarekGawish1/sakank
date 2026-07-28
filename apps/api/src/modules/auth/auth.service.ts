@@ -1,116 +1,133 @@
-import { getFirebaseAuth } from '~/lib/firebase';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '~/lib/jwt';
-import { UnauthorizedError, ForbiddenError } from '~/shared/errors';
+import { UnauthorizedError, BadRequestError, ConflictError } from '~/shared/errors';
 import { JwtPayload } from '~/shared/types';
 import { authRepository } from './auth.repository';
+import { emailService } from '~/shared/services/email.service';
+import { SignupInput, LoginInput } from './auth.validator';
 import { AuthTokensResponse, RefreshResponse, MeResponse } from './auth.dto';
 import { toMeResponse } from './auth.mapper';
 import { logger } from '~/utils/logger';
 
 export const authService = {
   /**
-   * Verifies a Firebase token and either finds or creates the user.
-   * Returns Sakank JWTs (access + refresh) and user info.
+   * Registers a new user, hashes password, and sends verification email.
    */
-  verifyOtpAndLogin: async (firebaseToken: string): Promise<AuthTokensResponse> => {
-    // 1. Verify Firebase token
-    let decodedToken;
-    try {
-      decodedToken = await getFirebaseAuth().verifyIdToken(firebaseToken);
-    } catch (error) {
-      logger.warn({ error }, 'Firebase token verification failed');
-      throw new UnauthorizedError('Invalid Firebase token', 'AUTH_001');
-    }
+  signup: async (data: SignupInput): Promise<{ message: string }> => {
+    // Check if email or phone already exists
+    const [existingEmail, existingPhone] = await Promise.all([
+      authRepository.findUserByEmail(data.email),
+      authRepository.findUserByPhone(data.phone),
+    ]);
 
-    const phone = decodedToken.phone_number;
-    if (!phone) {
-      throw new UnauthorizedError('Phone number not found in Firebase token', 'AUTH_001');
-    }
+    if (existingEmail) throw new ConflictError('البريد الإلكتروني مسجل مسبقاً', 'AUTH_002');
+    if (existingPhone) throw new ConflictError('رقم الهاتف مسجل مسبقاً', 'AUTH_003');
 
-    // 2. Find or create user
-    let user = await authRepository.findUserByPhone(phone);
-    let isNewUser = false;
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 12);
+
+    // Generate Verification Token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    // Create User
+    const user = await authRepository.createUser(data, hashedPassword, verificationToken);
+
+    // Send Verification Email
+    await emailService.sendVerificationEmail(user.email, verificationToken);
+
+    return { message: 'تم إنشاء الحساب بنجاح. يرجى مراجعة بريدك الإلكتروني لتفعيله.' };
+  },
+
+  /**
+   * Authenticates a user using email and password.
+   */
+  login: async (data: LoginInput): Promise<AuthTokensResponse> => {
+    const user = await authRepository.findUserByEmail(data.email);
 
     if (!user) {
-      // New user — create with default STUDENT role
-      user = await authRepository.createUser({
-        phone,
-        firstName: '',
-        lastName: '',
-        gender: 'MALE',
-        role: 'STUDENT',
-        phoneVerifiedAt: new Date(),
-      });
-      isNewUser = true;
-    } else {
-      // Check if user is blocked
-      if (user.isBlocked) {
-        throw new ForbiddenError('Your account has been suspended. Contact support.', 'AUTH_002');
-      }
-      if (!user.isActive) {
-        throw new ForbiddenError('Your account is deactivated', 'AUTH_002');
-      }
-      // Update last login
-      await authRepository.updateLastLogin(user.id);
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'AUTH_004');
     }
 
-    // 3. Generate tokens
-    const jwtPayload: JwtPayload = {
-      userId: user.id,
-      role: user.role,
-    };
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
 
-    const accessToken = generateAccessToken(jwtPayload);
-    const refreshToken = generateRefreshToken(jwtPayload);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'AUTH_004');
+    }
+
+    if (!user.emailVerifiedAt) {
+      throw new UnauthorizedError('يرجى تفعيل بريدك الإلكتروني أولاً', 'AUTH_005');
+    }
+
+    if (user.isBlocked) {
+      throw new UnauthorizedError('هذا الحساب محظور. يرجى التواصل مع الإدارة.', 'AUTH_006');
+    }
+
+    // Generate Tokens
+    const payload: JwtPayload = { userId: user.id, role: user.role };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    await authRepository.updateUserLastLogin(user.id);
 
     return {
       accessToken,
       refreshToken,
       user: {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
         role: user.role,
-        isNewUser,
+        isCompleted: !!(user.studentProfile || user.ownerProfile),
       },
     };
   },
 
   /**
+   * Verifies the email address using the token.
+   */
+  verifyEmail: async (token: string): Promise<{ message: string }> => {
+    const user = await authRepository.findUserByVerificationToken(token);
+
+    if (!user) {
+      throw new BadRequestError('رابط التفعيل غير صالح أو منتهي الصلاحية', 'AUTH_007');
+    }
+
+    await authRepository.markEmailAsVerified(user.id);
+
+    return { message: 'تم تفعيل البريد الإلكتروني بنجاح. يمكنك تسجيل الدخول الآن.' };
+  },
+
+  /**
    * Refreshes the access token using a valid refresh token.
    */
-  refreshAccessToken: async (refreshToken: string): Promise<RefreshResponse> => {
-    let payload: JwtPayload;
-    try {
-      payload = verifyRefreshToken(refreshToken);
-    } catch {
-      throw new UnauthorizedError('Invalid or expired refresh token', 'AUTH_001');
-    }
-
-    // Verify user still exists and is active
+  refresh: async (token: string): Promise<RefreshResponse> => {
+    const payload = verifyRefreshToken(token);
     const user = await authRepository.findUserById(payload.userId);
-    if (!user || !user.isActive || user.isBlocked) {
-      throw new UnauthorizedError('User account no longer active', 'AUTH_001');
+
+    if (!user || user.isBlocked) {
+      throw new UnauthorizedError('Invalid or revoked token', 'AUTH_002');
     }
 
-    const newAccessToken = generateAccessToken({
-      userId: user.id,
-      role: user.role,
-    });
-
+    const newAccessToken = generateAccessToken({ userId: user.id, role: user.role });
     return { accessToken: newAccessToken };
   },
 
   /**
-   * Returns the current authenticated user's profile.
+   * Logs out the user (In a real scenario, we would blacklist the refresh token).
+   */
+  logout: async (refreshToken: string): Promise<void> => {
+    verifyRefreshToken(refreshToken);
+    // TODO: Blacklist the refresh token in Redis or Database
+    logger.info('User logged out successfully');
+  },
+
+  /**
+   * Gets the current user's profile details.
    */
   getMe: async (userId: string): Promise<MeResponse> => {
     const user = await authRepository.findUserById(userId);
-
     if (!user) {
-      throw new UnauthorizedError('User not found', 'AUTH_001');
+      throw new UnauthorizedError('User not found');
     }
-
     return toMeResponse(user);
   },
 };

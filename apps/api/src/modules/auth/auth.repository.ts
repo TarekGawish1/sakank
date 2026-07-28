@@ -1,14 +1,21 @@
 import { prisma } from '~/lib/prisma';
-import { UserRole } from '@prisma/client';
+import { User } from '@prisma/client';
+import { SignupInput } from './auth.validator';
 
 export const authRepository = {
-  findUserByPhone: async (phone: string) => {
+  findUserByEmail: async (email: string) => {
     return prisma.user.findUnique({
-      where: { phone },
+      where: { email },
       include: {
         studentProfile: true,
         ownerProfile: true,
       },
+    });
+  },
+
+  findUserByPhone: async (phone: string) => {
+    return prisma.user.findUnique({
+      where: { phone },
     });
   },
 
@@ -16,41 +23,51 @@ export const authRepository = {
     return prisma.user.findUnique({
       where: { id },
       include: {
-        studentProfile: true,
+        studentProfile: { include: { university: true } },
         ownerProfile: true,
       },
     });
   },
 
-  createUser: async (data: {
-    phone: string;
-    firstName: string;
-    lastName: string;
-    gender: 'MALE' | 'FEMALE';
-    role: UserRole;
-    phoneVerifiedAt: Date;
-  }) => {
+  findUserByVerificationToken: async (token: string) => {
+    return prisma.user.findUnique({
+      where: { verificationToken: token },
+    });
+  },
+
+  createUser: async (
+    data: SignupInput,
+    hashedPassword: string,
+    verificationToken: string
+  ): Promise<User> => {
     return prisma.user.create({
       data: {
+        email: data.email,
+        password: hashedPassword,
         phone: data.phone,
         firstName: data.firstName,
         lastName: data.lastName,
         gender: data.gender,
         role: data.role,
-        phoneVerifiedAt: data.phoneVerifiedAt,
-        lastLoginAt: new Date(),
-      },
-      include: {
-        studentProfile: true,
-        ownerProfile: true,
+        verificationToken,
       },
     });
   },
 
-  updateLastLogin: async (userId: string) => {
+  updateUserLastLogin: async (id: string) => {
     return prisma.user.update({
-      where: { id: userId },
+      where: { id },
       data: { lastLoginAt: new Date() },
+    });
+  },
+
+  markEmailAsVerified: async (id: string) => {
+    return prisma.user.update({
+      where: { id },
+      data: {
+        emailVerifiedAt: new Date(),
+        verificationToken: null,
+      },
     });
   },
 };

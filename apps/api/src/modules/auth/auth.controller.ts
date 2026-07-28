@@ -1,17 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
-import { sendSuccess, sendCreated } from '~/shared/utils/response';
 
 export const authController = {
-  verifyOtp: async (req: Request, res: Response, next: NextFunction) => {
+  signup: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { firebaseToken } = req.body;
-      const result = await authService.verifyOtpAndLogin(firebaseToken);
+      const result = await authService.signup(req.body);
+      res.status(201).json({
+        success: true,
+        data: result,
+        meta: null,
+        error: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 
-      if (result.user.isNewUser) {
-        return sendCreated(res, result);
-      }
-      return sendSuccess(res, result);
+  login: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.login(req.body);
+      res.status(200).json({
+        success: true,
+        data: result,
+        meta: null,
+        error: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  verifyEmail: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.verifyEmail(req.body.token);
+      res.status(200).json({
+        success: true,
+        data: result,
+        meta: null,
+        error: null,
+      });
     } catch (error) {
       next(error);
     }
@@ -19,29 +46,41 @@ export const authController = {
 
   refresh: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refreshToken } = req.body;
-      const result = await authService.refreshAccessToken(refreshToken);
-      return sendSuccess(res, result);
+      const result = await authService.refresh(req.body.refreshToken);
+      res.status(200).json({
+        success: true,
+        data: result,
+        meta: null,
+        error: null,
+      });
     } catch (error) {
       next(error);
     }
   },
 
-  logout: async (_req: Request, res: Response, next: NextFunction) => {
+  logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Stateless JWT — logout is handled client-side by deleting tokens
-      // Future: If using Redis token blacklist, invalidate here
-      return sendSuccess(res, { message: 'Logged out successfully' });
+      await authService.logout(req.body.refreshToken);
+      res.status(200).json({
+        success: true,
+        data: null,
+        meta: null,
+        error: null,
+      });
     } catch (error) {
       next(error);
     }
   },
 
-  me: async (req: Request, res: Response, next: NextFunction) => {
+  getMe: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user!.userId;
-      const result = await authService.getMe(userId);
-      return sendSuccess(res, result);
+      const user = await authService.getMe(req.user!.userId);
+      res.status(200).json({
+        success: true,
+        data: user,
+        meta: null,
+        error: null,
+      });
     } catch (error) {
       next(error);
     }

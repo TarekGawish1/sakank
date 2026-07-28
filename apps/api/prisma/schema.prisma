@@ -102,7 +102,8 @@ model User {
   deletedAt DateTime? @map("deleted_at")
   version   Int       @default(1) @map("version")
 
-  email           String?   @unique @map("email")
+  email           String    @unique @map("email")
+  password        String    @map("password")
   phone           String    @unique @map("phone")
   firstName       String    @map("first_name")
   lastName        String    @map("last_name")
@@ -110,7 +111,8 @@ model User {
   role            UserRole  @map("role")
   isActive        Boolean   @default(true) @map("is_active")
   isBlocked       Boolean   @default(false) @map("is_blocked")
-  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  verificationToken String? @unique @map("verification_token")
   lastLoginAt     DateTime? @map("last_login_at")
 
   studentProfile               StudentProfile?

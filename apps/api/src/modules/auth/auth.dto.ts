@@ -13,10 +13,8 @@ export interface AuthTokensResponse {
   refreshToken: string;
   user: {
     id: string;
-    firstName: string;
-    lastName: string;
-    role: UserRole;
-    isNewUser: boolean;
+    role: string;
+    isCompleted: boolean;
   };
 }
 

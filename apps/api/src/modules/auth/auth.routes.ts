@@ -1,29 +1,25 @@
 import { Router } from 'express';
 import { authController } from './auth.controller';
-import { requireAuth } from '~/shared/middlewares/auth';
 import { validate } from '~/shared/middlewares/validate';
-import { verifyOtpSchema, refreshTokenSchema } from './auth.validator';
+import { requireAuth } from '~/shared/middlewares/auth';
+import {
+  signupSchema,
+  loginSchema,
+  verifyEmailSchema,
+  refreshTokenSchema,
+  logoutSchema,
+} from './auth.validator';
 
-const router = Router();
+export const authRouter = Router();
 
-// POST /api/v1/auth/otp/verify — Exchange Firebase token for Sakank JWTs
-router.post(
-  '/otp/verify',
-  validate({ body: verifyOtpSchema }),
-  authController.verifyOtp,
-);
+// Registration & Login
+authRouter.post('/signup', validate({ body: signupSchema }), authController.signup);
+authRouter.post('/login', validate({ body: loginSchema }), authController.login);
+authRouter.post('/verify-email', validate({ body: verifyEmailSchema }), authController.verifyEmail);
 
-// POST /api/v1/auth/refresh — Issue new access token
-router.post(
-  '/refresh',
-  validate({ body: refreshTokenSchema }),
-  authController.refresh,
-);
+// Session Management
+authRouter.post('/refresh', validate({ body: refreshTokenSchema }), authController.refresh);
+authRouter.post('/logout', requireAuth, validate({ body: logoutSchema }), authController.logout);
 
-// POST /api/v1/auth/logout — Invalidate refresh token (client-side)
-router.post('/logout', requireAuth, authController.logout);
-
-// GET /api/v1/auth/me — Get current user profile
-router.get('/me', requireAuth, authController.me);
-
-export { router as authRoutes };
+// User Profile
+authRouter.get('/me', requireAuth, authController.getMe);

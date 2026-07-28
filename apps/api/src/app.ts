@@ -13,7 +13,7 @@ import { requestId } from '~/middlewares/requestId';
 
 // Module routes
 import { healthRoutes } from '~/modules/health/health.routes';
-import { authRoutes } from '~/modules/auth/auth.routes';
+import { authRouter } from '~/modules/auth/auth.routes';
 import { usersRoutes } from '~/modules/users/users.routes';
 import { listingsRoutes, favoritesRoutes } from '~/modules/listings/listings.routes';
 import { stayRequestsRoutes } from '~/modules/stay-requests/stay-requests.routes';
@@ -69,7 +69,7 @@ const authLimiter = rateLimit({
 app.use('/health', healthRoutes);
 
 // API v1 routes
-app.use('/api/v1/auth', authLimiter, authRoutes);
+app.use('/api/v1/auth', authLimiter, authRouter);
 app.use('/api/v1', usersRoutes); // /profile/student, /profile/avatar, /universities
 app.use('/api/v1/listings', listingsRoutes);
 app.use('/api/v1/favorites', favoritesRoutes);
