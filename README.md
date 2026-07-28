@@ -1,29 +1,41 @@
-# Sakank Monorepo
+# Sakank
 
-Welcome to the Sakank engineering monorepo.
+Sakank is a purpose-built, mobile-first marketplace designed to solve a localized, highly painful problem: university student accommodation in Egypt. It creates a trusted, verified ecosystem connecting students with property owners, focusing relentlessly on safety, transparency, and the specific needs of the academic calendar.
 
-## Apps
+## Tech Stack
+- **Monorepo:** Turborepo, pnpm workspaces
+- **Backend:** Node.js, Express, TypeScript, Prisma, PostgreSQL
+- **Mobile:** React Native, Expo, Expo Router
+- **Authentication:** Firebase Phone OTP + JWT
 
-- \pi\: Node.js/Express backend
-- \mobile\: React Native Expo app
-- \dmin\: React admin dashboard
+## Monorepo Structure
+```
+sakank/
+├── apps/
+│   ├── api/        # Express Backend
+│   ├── mobile/     # Expo React Native App
+│   └── admin/      # Future Admin Dashboard
+├── packages/
+│   ├── config/     # Shared configuration
+│   ├── constants/  # Shared constants
+│   ├── types/      # Shared types and interfaces
+│   ├── utils/      # Shared utility functions
+│   └── validation/ # Shared Zod schemas
+└── docs/           # Documentation
+```
 
-## Packages
+## Getting Started
 
-- \@sakank/types\: Shared TS types
-- \@sakank/validation\: Zod schemas
-- \@sakank/constants\: Shared constants
-- \@sakank/utils\: Pure utility functions
-- \@sakank/config\: Eslint/TSConfig
-- \@sakank/ui\: Shared UI components
+See [docs/onboarding.md](./docs/onboarding.md) for complete setup instructions.
 
-## Setup
+## Development Commands
+- `pnpm install` - Install dependencies
+- `pnpm dev` - Start development servers
+- `pnpm lint` - Run ESLint across workspace
+- `pnpm typecheck` - Run TypeScript compiler checks
 
-1. \pnpm install\
-2. \pnpm dev\
-   "@
+## Git Workflow
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for branch strategy, conventional commits, and pull request guidelines.
 
-Set-Content -Path "LICENSE" -Value @"
-Proprietary License
-
-Copyright (c) 2026 Sakank. All rights reserved.
+## Roadmap
+For an overview of the system, see [docs/architecture/system-overview.md](./docs/architecture/system-overview.md).
