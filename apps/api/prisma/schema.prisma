@@ -216,6 +216,7 @@ model Property {
   area         Area         @relation(fields: [areaId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   images PropertyImage[]
+  units  Unit[]
 
   @@index([ownerProfileId], name: "idx_property_owner_profile_id")
   @@index([governorateId], name: "idx_property_governorate_id")
@@ -242,4 +243,78 @@ model PropertyImage {
   @@index([propertyId], name: "idx_property_image_property_id")
   @@index([displayOrder], name: "idx_property_image_display_order")
   @@map("property_image")
+}
+
+enum UnitType {
+  APARTMENT
+  ROOM
+  BED
+  STUDIO
+}
+
+enum GenderRestriction {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+  MAINTENANCE
+  UNAVAILABLE
+}
+
+model Unit {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  propertyId         String             @map("property_id")
+  unitNumber         String             @map("unit_number")
+  title              String             @map("title")
+  description        String             @map("description")
+  monthlyRent        Decimal            @map("monthly_rent") @db.Decimal
+  securityDeposit    Decimal            @map("security_deposit") @db.Decimal
+  capacity           Int                @map("capacity")
+  availableBeds      Int                @map("available_beds")
+  availableFrom      DateTime           @map("available_from")
+  unitType           UnitType           @map("unit_type")
+  genderRestriction  GenderRestriction  @map("gender_restriction")
+  availabilityStatus AvailabilityStatus @map("availability_status")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  images UnitImage[]
+
+  @@unique([propertyId, unitNumber], name: "uq_unit_property_id_unit_number")
+  @@index([propertyId], name: "idx_unit_property_id")
+  @@index([unitType], name: "idx_unit_unit_type")
+  @@index([availabilityStatus], name: "idx_unit_availability_status")
+  @@index([genderRestriction], name: "idx_unit_gender_restriction")
+  @@index([monthlyRent], name: "idx_unit_monthly_rent")
+  @@index([availableFrom], name: "idx_unit_available_from")
+  @@map("unit")
+}
+
+model UnitImage {
+  id        String    @id @default(uuid()) @map("id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  version   Int       @default(1) @map("version")
+
+  unitId       String  @map("unit_id")
+  url          String  @map("url")
+  displayOrder Int     @map("display_order")
+  isPrimary    Boolean @default(false) @map("is_primary")
+
+  unit Unit @relation(fields: [unitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([unitId], name: "idx_unit_image_unit_id")
+  @@index([displayOrder], name: "idx_unit_image_display_order")
+  @@map("unit_image")
 }
