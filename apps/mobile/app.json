@@ -21,7 +21,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "sdkVersion": "56.0.0",
     "updates": {
       "enabled": false
     }
