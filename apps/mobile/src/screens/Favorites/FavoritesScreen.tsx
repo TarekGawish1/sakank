@@ -68,11 +68,6 @@ export const FavoritesScreen: React.FC = () => {
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <AppIcon name="ArrowLeft" size="md" color="primary" style={styles.backIcon} />
-        <Pressable onPress={() => {}}>
-          <AppText variant="button" color="textPrimary" weight="bold" style={styles.editBtn}>
-            تعديل
-          </AppText>
-        </Pressable>
       </View>
       <AppText variant="display" color="textPrimary" weight="bold" style={styles.mainTitle}>
         المفضلة
