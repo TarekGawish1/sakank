@@ -11,7 +11,10 @@ export const NearbyListingsSection: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AppText variant="title1" color="textPrimary">بالقرب منك</AppText>
+        <View>
+          <AppText variant="title2" color="textPrimary">بالقرب منك</AppText>
+          <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>عقارات قريبة من موقعك الحالي</AppText>
+        </View>
         <AppText variant="bodyBase" color="textBrand">عرض الكل</AppText>
       </View>
       <View style={styles.list}>
@@ -30,14 +33,17 @@ export const NearbyListingsSection: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: theme.spacing[16],
+    paddingVertical: theme.spacing[24],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-start',
     paddingHorizontal: theme.spacing[16],
-    marginBottom: theme.spacing[12],
+    marginBottom: theme.spacing[16],
+  },
+  subtitle: {
+    marginTop: theme.spacing[4],
   },
   list: {
     paddingHorizontal: theme.spacing[16],

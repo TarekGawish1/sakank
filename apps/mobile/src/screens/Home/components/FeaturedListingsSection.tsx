@@ -10,7 +10,8 @@ export const FeaturedListingsSection: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AppText variant="title1" color="textPrimary">عقارات مميزة</AppText>
+        <AppText variant="title2" color="textPrimary">عقارات مميزة</AppText>
+        <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>اكتشف أفضل السكنات المختارة</AppText>
       </View>
       <ScrollView
         horizontal
@@ -33,11 +34,14 @@ export const FeaturedListingsSection: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: theme.spacing[16],
+    paddingVertical: theme.spacing[24],
   },
   header: {
     paddingHorizontal: theme.spacing[16],
-    marginBottom: theme.spacing[12],
+    marginBottom: theme.spacing[16],
+  },
+  subtitle: {
+    marginTop: theme.spacing[4],
   },
   list: {
     paddingHorizontal: theme.spacing[16],

@@ -101,7 +101,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 
       {/* Body Area */}
       <CardBody padding="md" style={styles.body}>
-        {/* Header: Title & Location */}
+        {/* Header: Title & Rating */}
         <View style={styles.headerRow}>
           <View style={styles.titleCol}>
             <AppText variant="title2" color="textPrimary" numberOfLines={1}>
@@ -111,33 +111,28 @@ export const ListingCard: React.FC<ListingCardProps> = ({
               {location}
             </AppText>
           </View>
-          <View style={styles.priceCol}>
-            <AppText variant="title2" color="textBrand">
-              {price}
-            </AppText>
-            <AppText variant="caption" color="textSecondary">
-              {currency} / شهر
-            </AppText>
-          </View>
-        </View>
-
-        {/* Footer: Rating & Owner */}
-        <View style={styles.infoRow}>
           {rating !== undefined ? (
             <View style={styles.ratingBox}>
               <AppIcon name="Star" size="sm" color="warning" />
               <AppText variant="label" color="textPrimary">
                 {rating}
               </AppText>
-              {reviewCount !== undefined && (
-                <AppText variant="caption" color="textSecondary">
-                  ({reviewCount})
-                </AppText>
-              )}
             </View>
           ) : (
             <View />
           )}
+        </View>
+
+        {/* Footer: Price & Owner */}
+        <View style={styles.infoRow}>
+          <View style={styles.priceBox}>
+            <AppText variant="title2" color="textPrimary">
+              {price}
+            </AppText>
+            <AppText variant="caption" color="textSecondary">
+               {currency} / شهر
+            </AppText>
+          </View>
 
           <View style={styles.ownerBox}>
             <AppText variant="caption" color="textSecondary">
@@ -173,13 +168,19 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     overflow: 'hidden',
+    borderWidth: 0, // Make it feel lighter
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 16 / 9,
+    aspectRatio: 4 / 3, // Airbnb style ratio
     position: 'relative',
-    borderTopLeftRadius: theme.radius.md,
-    borderTopRightRadius: theme.radius.md,
+    borderTopLeftRadius: theme.radius.lg, // Make card feel more premium
+    borderTopRightRadius: theme.radius.lg,
     overflow: 'hidden',
   },
   image: {
@@ -197,9 +198,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   favoriteButton: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    padding: theme.spacing[8],
+    backgroundColor: 'rgba(255,255,255,0.9)', // Lighter, cleaner favorite button
+    padding: theme.spacing[6],
     borderRadius: theme.radius.full,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
   unavailableOverlay: {
     ...StyleSheet.absoluteFill as any,
@@ -208,7 +214,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   body: {
-    gap: theme.spacing[12],
+    gap: theme.spacing[8],
+    paddingTop: theme.spacing[12],
+    paddingBottom: theme.spacing[16],
+    paddingHorizontal: theme.spacing[12],
   },
   headerRow: {
     flexDirection: 'row',
@@ -222,8 +231,11 @@ const styles = StyleSheet.create({
   location: {
     marginTop: theme.spacing[2],
   },
-  priceCol: {
-    alignItems: 'flex-end',
+  ratingBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing[4],
+    marginTop: theme.spacing[2],
   },
   infoRow: {
     flexDirection: 'row',
@@ -231,9 +243,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: theme.spacing[4],
   },
-  ratingBox: {
+  priceBox: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
     gap: theme.spacing[4],
   },
   ownerBox: {
