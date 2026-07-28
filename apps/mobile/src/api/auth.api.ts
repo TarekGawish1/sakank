@@ -62,5 +62,20 @@ export const AuthApi = {
       }
     }
     await TokenManager.clearTokens();
+  },
+
+  verifyEmail: async (data: { code: string }): Promise<any> => {
+    const response = await apiClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.VERIFY_EMAIL, data);
+    return response.data;
+  },
+
+  forgotPassword: async (data: { email: string }): Promise<any> => {
+    const response = await apiClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.FORGOT_PASSWORD, data);
+    return response.data;
+  },
+
+  resetPassword: async (data: any): Promise<any> => {
+    const response = await apiClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.RESET_PASSWORD, data);
+    return response.data;
   }
 };

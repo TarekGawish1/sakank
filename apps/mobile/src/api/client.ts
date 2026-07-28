@@ -53,9 +53,14 @@ class ApiClient {
   private async handleError(response: Response) {
     let data;
     try {
-      data = await response.json();
-    } catch {
-      data = await response.text();
+      const text = await response.text();
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = text;
+      }
+    } catch (e) {
+      data = null;
     }
 
     const message = data?.message || response.statusText || 'Unknown error occurred';
@@ -69,7 +74,10 @@ class ApiClient {
   }
 
   private buildUrl(endpoint: string, params?: Record<string, string | number | boolean | undefined>): string {
-    const url = new URL(endpoint, this.baseURL);
+    const cleanBaseURL = this.baseURL.endsWith('/') ? this.baseURL.slice(0, -1) : this.baseURL;
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    
+    const url = new URL(`${cleanBaseURL}${cleanEndpoint}`);
     if (params) {
       Object.keys(params).forEach(key => {
         if (params[key] !== undefined && params[key] !== null) {

@@ -34,8 +34,11 @@ export interface ListingsResponse {
 
 export const ListingsApi = {
   getListings: async (params?: any): Promise<ListingsResponse> => {
-    const response = await apiClient.get<ApiResponse<ListingsResponse>>(ENDPOINTS.LISTINGS.BASE, { params });
-    return response.data;
+    const response = await apiClient.get<any>(ENDPOINTS.LISTINGS.BASE, { params });
+    return {
+      items: response.data || [],
+      meta: response.meta || { cursor: null, limit: 20, hasMore: false }
+    };
   },
 
   getListingById: async (id: string): Promise<any> => {
