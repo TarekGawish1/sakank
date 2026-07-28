@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   ViewStyle,
   TextStyle,
   StyleProp,
@@ -10,6 +9,7 @@ import {
 } from 'react-native';
 import { theme } from '../../theme';
 import { AppText, SemanticColor } from '../AppText';
+import { Spinner, SpinnerColor } from '../Spinner';
 
 export type ButtonHierarchy = 'primary' | 'secondary' | 'tertiary' | 'text';
 export type ButtonSize = 'large' | 'medium';
@@ -46,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
   // Determine styles based on hierarchy
   const getHierarchyStyles = (
     pressed: boolean
-  ): { container: ViewStyle; textColor: SemanticColor; loaderColor: string } => {
+  ): { container: ViewStyle; textColor: SemanticColor; loaderColor: SpinnerColor } => {
     switch (hierarchy) {
       case 'secondary':
         return {
@@ -58,7 +58,7 @@ export const Button: React.FC<ButtonProps> = ({
             borderWidth: 1,
           },
           textColor: 'textPrimary',
-          loaderColor: theme.colors.textPrimary,
+          loaderColor: 'secondary',
         };
       case 'tertiary':
         return {
@@ -69,7 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
             borderWidth: 0,
           },
           textColor: 'textBrand',
-          loaderColor: theme.colors.textBrand,
+          loaderColor: 'primary',
         };
       case 'text':
         return {
@@ -80,7 +80,7 @@ export const Button: React.FC<ButtonProps> = ({
             borderWidth: 0,
           },
           textColor: 'textBrand',
-          loaderColor: theme.colors.textBrand,
+          loaderColor: 'primary',
         };
       case 'primary':
       default:
@@ -92,7 +92,7 @@ export const Button: React.FC<ButtonProps> = ({
             borderWidth: 0,
           },
           textColor: 'textInverse',
-          loaderColor: theme.colors.textInverse,
+          loaderColor: 'inverse',
         };
     }
   };
@@ -142,9 +142,9 @@ export const Button: React.FC<ButtonProps> = ({
         return (
           <>
             {loading ? (
-              <ActivityIndicator
+              <Spinner
                 color={hierarchyStyles.loaderColor}
-                size="small"
+                size="sm"
                 style={styles.loader}
               />
             ) : null}

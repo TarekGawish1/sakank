@@ -5,13 +5,13 @@ import {
   TextInputProps,
   StyleSheet,
   Pressable,
-  ActivityIndicator,
   I18nManager,
   StyleProp,
   ViewStyle,
 } from 'react-native';
 import { theme } from '../../theme';
 import { AppText } from '../AppText';
+import { Spinner } from '../Spinner';
 
 export interface InputProps extends Omit<TextInputProps, 'style'> {
   // Anatomy
@@ -200,7 +200,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props, ref) => {
 
         {/* Loading Indicator */}
         {loading && (
-          <ActivityIndicator color={theme.colors.iconBrand} size="small" style={styles.rightSlot} />
+          <Spinner color="primary" size="sm" style={styles.rightSlot} />
         )}
 
         {/* Suffix */}
