@@ -24,6 +24,9 @@ router.get('/users', adminController.listUsers);
 // POST /api/v1/admin/users/:id/block
 router.post('/users/:id/block', adminController.blockUser);
 
+// PUT /api/v1/admin/users/:id
+router.put('/users/:id', adminController.updateUser);
+
 // GET /api/v1/admin/properties
 router.get('/properties', adminController.listProperties);
 

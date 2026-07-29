@@ -45,6 +45,16 @@ export const adminController = {
     }
   },
 
+  updateUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { firstName, lastName, role } = req.body;
+      const result = await adminService.updateUser(req.params.id, { firstName, lastName, role });
+      return sendSuccess(res, result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteProperty: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await adminService.deleteProperty(req.params.id);

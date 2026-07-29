@@ -182,4 +182,11 @@ export const adminRepository = {
       },
     });
   },
+
+  updateUser: async (id: string, data: { firstName?: string; lastName?: string; role?: UserRole }) => {
+    return prisma.user.update({
+      where: { id },
+      data,
+    });
+  },
 };

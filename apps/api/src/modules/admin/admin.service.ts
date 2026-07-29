@@ -1,5 +1,6 @@
 import { NotFoundError, BadRequestError } from '~/shared/errors';
 import { PaginationMeta } from '~/shared/types';
+import { UserRole } from '@prisma/client';
 import { adminRepository } from './admin.repository';
 import { AdminVerificationResponse, AdminListingHideResponse } from './admin.dto';
 import { toAdminVerificationResponse } from './admin.mapper';
@@ -145,6 +146,17 @@ export const adminService = {
       id: listingId,
       status: 'ARCHIVED',
       message: 'Listing has been hidden successfully',
+    };
+  },
+
+  updateUser: async (userId: string, data: { firstName?: string; lastName?: string; role?: UserRole }) => {
+    const updated = await adminRepository.updateUser(userId, data);
+    if (!updated) throw new NotFoundError('User');
+    return {
+      id: updated.id,
+      firstName: updated.firstName,
+      lastName: updated.lastName,
+      role: updated.role,
     };
   },
 };
