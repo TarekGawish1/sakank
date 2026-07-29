@@ -19,19 +19,6 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
           value={searchQuery}
           onChangeText={onSearchChange}
           placeholder="ابحث عن جامعة، حي، أو سكن..."
-          inputContainerStyle={{
-            height: 52,
-            borderRadius: theme.radius.full,
-            paddingHorizontal: theme.spacing[20],
-            backgroundColor: theme.colors.surfaceDefault,
-            borderColor: theme.colors.borderSubtle,
-            borderWidth: 1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.04,
-            shadowRadius: 8,
-            elevation: 2,
-          }}
         />
       </View>
 
@@ -52,13 +39,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: theme.spacing[16],
-    paddingTop: theme.spacing[8], // Reduced vertical spacing
+    paddingTop: theme.spacing[8],
     paddingBottom: theme.spacing[8],
     gap: theme.spacing[12],
     backgroundColor: theme.colors.surfaceDefault,
   },
   searchWrapper: {
-    flex: 1, // Take up remaining space
+    flex: 1,
   },
   notificationBtn: {
     padding: theme.spacing[12],
@@ -67,18 +54,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.borderSubtle,
     position: 'relative',
-    height: 52,
-    width: 52,
+    height: theme.spacing[48],
+    width: theme.spacing[48],
     alignItems: 'center',
     justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: theme.spacing[12],
+    right: theme.spacing[12],
+    width: theme.spacing[8],
+    height: theme.spacing[8],
+    borderRadius: theme.radius.sm,
     backgroundColor: theme.colors.error,
     borderWidth: 1.5,
     borderColor: theme.colors.surfaceDefault,

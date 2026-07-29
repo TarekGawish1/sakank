@@ -28,7 +28,7 @@ export const AuthHeader: React.FC<AuthHeaderProps> = ({ icon, title, subtitle, o
       
       {icon && (
         <View style={styles.logoContainer}>
-          <AppIcon name={icon as any} size="xl" color="brandPrimary" />
+          <AppIcon name="Building2" size="xl" color="primary" />
         </View>
       )}
       

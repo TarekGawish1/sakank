@@ -15,7 +15,7 @@ export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ listing }) => 
   const { mutate: toggleFavorite } = useToggleFavorite();
 
   const firstImage = listing.images?.[0];
-  const imageUri = (typeof firstImage === 'string' ? firstImage : firstImage?.url) || listing.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+  const imageUri = (typeof firstImage === 'string' ? firstImage : (firstImage as any)?.url) || listing.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
 
   return (
     <View style={styles.container}>
@@ -70,14 +70,10 @@ const styles = StyleSheet.create({
   iconButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: theme.radius.full,
     backgroundColor: theme.colors.surfaceDefault,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
+    ...theme.elevation.md,
   }
 });

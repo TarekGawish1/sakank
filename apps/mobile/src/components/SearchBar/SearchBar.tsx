@@ -28,17 +28,13 @@ export const SearchBar = React.forwardRef<TextInput, SearchBarProps>(({
       autoCapitalize="none"
       accessibilityRole="search"
       inputContainerStyle={{
-        height: 52,
-        borderRadius: 26,
+        height: theme.spacing[48],
+        borderRadius: theme.radius.full,
         paddingHorizontal: theme.spacing[20],
-        backgroundColor: '#FFFFFF',
-        borderColor: 'rgba(0, 0, 0, 0.05)',
+        backgroundColor: theme.colors.surfaceDefault,
+        borderColor: theme.colors.borderSubtle,
         borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 12,
-        elevation: 3,
+        ...theme.elevation.sm,
       }}
       {...rest}
     />

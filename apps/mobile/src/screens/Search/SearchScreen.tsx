@@ -86,7 +86,7 @@ export const SearchScreen: React.FC = () => {
           accessibilityLabel="الفلاتر"
           onPress={() => setFiltersVisible(true)}
         >
-          <AppIcon name="Sliders" size="md" color={hasFilters ? 'primary' : 'textSecondary'} />
+          <AppIcon name="Sliders" size="md" color={hasFilters ? 'primary' : 'secondary'} />
         </Pressable>
         <View style={styles.searchWrapper}>
           <SearchBar

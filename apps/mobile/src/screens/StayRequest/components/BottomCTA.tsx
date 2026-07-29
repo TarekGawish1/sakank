@@ -37,11 +37,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderSubtle,
     gap: theme.spacing[12],
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: -5 },
-    elevation: 10,
+    ...theme.elevation.md,
   },
   cancelBtn: {
     flex: 0.35,

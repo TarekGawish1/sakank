@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     opacity: 0.2, // Simulate blur by reducing opacity behind the glass
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(255, 255, 255, 0.75)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -114,12 +114,12 @@ const styles = StyleSheet.create({
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: theme.radius.full,
     backgroundColor: theme.colors.surfaceMuted,
   },
   info: {
     flex: 1,
-    gap: 4,
+    gap: theme.spacing[4],
   },
   nameRow: {
     flexDirection: 'row',

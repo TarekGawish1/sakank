@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.md,
     backgroundColor: theme.colors.surfaceDefault,
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: theme.typography.headline.fontSize,
     color: theme.colors.textPrimary,
     fontFamily: theme.fonts.primary,
   },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { theme } from '../../theme';
-import { AppText, Button, Card, ListingCard, AppIcon } from '../../components';
+import { AppText, Card, ListingCard, AppIcon, Button, EmptyState } from '../../components';
 import { useFavorites, useToggleFavorite } from '../../hooks/favorites';
 import { useSession } from '../../hooks/auth/useSession';
 import { ListingFeedItem } from '../../api/listings.api';
@@ -18,7 +18,7 @@ export const FavoritesScreen: React.FC = () => {
       <View style={styles.headerTop}>
         <AppIcon name="ArrowLeft" size="md" color="primary" style={styles.backIcon} />
       </View>
-      <AppText variant="display" color="textPrimary" weight="bold" style={styles.mainTitle}>
+      <AppText variant="headline" color="textPrimary" weight="bold" style={styles.mainTitle}>
         المفضلة
       </AppText>
     </View>
@@ -51,27 +51,6 @@ export const FavoritesScreen: React.FC = () => {
       </View>
     );
   };
-
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <View style={styles.emptyIconContainer}>
-        <AppIcon name="HeartOff" size="xl" color="tertiary" />
-      </View>
-      <AppText variant="title2" color="textPrimary" weight="bold" style={styles.emptyTitle}>
-        لا توجد عقارات محفوظة
-      </AppText>
-      <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.emptyDesc}>
-        ابدأ بحفظ العقارات التي تعجبك لتظهر هنا.
-      </AppText>
-      <Button
-        title="استكشف العقارات"
-        onPress={() => {}}
-        hierarchy="primary"
-        size="large"
-        style={styles.exploreButton}
-      />
-    </View>
-  );
 
   const renderErrorState = () => (
     <View style={styles.stateContainer}>
@@ -113,30 +92,29 @@ export const FavoritesScreen: React.FC = () => {
   const renderContent = () => {
     if (isGuest && !user) {
       return (
-        <View style={styles.emptyContainer}>
-          <View style={styles.emptyIconContainer}>
-            <AppIcon name="HeartOff" size="xl" color="tertiary" />
-          </View>
-          <AppText variant="title2" color="textPrimary" weight="bold" style={styles.emptyTitle}>
-            يرجى تسجيل الدخول
-          </AppText>
-          <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.emptyDesc}>
-            يجب عليك تسجيل الدخول لعرض قائمة مفضلتك
-          </AppText>
-          <Button
-            title="تسجيل الدخول"
-            onPress={() => logout()}
-            hierarchy="primary"
-            size="large"
-            style={styles.exploreButton}
-          />
-        </View>
+        <EmptyState
+          icon="HeartOff"
+          title="يرجى تسجيل الدخول"
+          description="يجب عليك تسجيل الدخول لعرض قائمة مفضلتك"
+          primaryButtonTitle="تسجيل الدخول"
+          primaryButtonOnPress={() => logout()}
+        />
       );
     }
 
     if (isLoading && !isRefetching) return renderLoadingSkeleton();
     if (isError) return renderErrorState();
-    if (favorites.length === 0) return renderEmptyState();
+    if (favorites.length === 0) {
+      return (
+        <EmptyState
+          icon="HeartOff"
+          title="لا توجد عقارات محفوظة"
+          description="ابدأ بحفظ العقارات التي تعجبك لتظهر هنا."
+          primaryButtonTitle="استكشف العقارات"
+          primaryButtonOnPress={() => {}}
+        />
+      );
+    }
 
     return (
       <ScrollView 
@@ -184,10 +162,7 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing[16],
   },
   backIcon: {
-    marginLeft: -theme.spacing[8], // Aligns icon with left edge visually
-  },
-  editBtn: {
-    textDecorationLine: 'underline',
+    marginLeft: -theme.spacing[8],
   },
   mainTitle: {
     marginBottom: theme.spacing[8],
@@ -208,7 +183,7 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: theme.spacing[16], // Slightly less to accommodate grid gaps
+    paddingHorizontal: theme.spacing[16],
   },
   gridItem: {
     width: '50%',
@@ -221,30 +196,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: theme.spacing[24],
     justifyContent: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: theme.spacing[32],
-  },
-  emptyIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: theme.colors.surfaceSubdued,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing[24],
-  },
-  emptyTitle: {
-    marginBottom: theme.spacing[8],
-  },
-  emptyDesc: {
-    marginBottom: theme.spacing[32],
-  },
-  exploreButton: {
-    width: '100%',
   },
   errorCard: {
     alignItems: 'center',
@@ -270,7 +221,7 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     borderRadius: theme.radius.lg,
-    backgroundColor: theme.colors.surfaceSubdued,
+    backgroundColor: theme.colors.surfaceMuted,
   },
   skeletonContent: {
     gap: theme.spacing[4],
@@ -279,12 +230,12 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 14,
     borderRadius: theme.radius.sm,
-    backgroundColor: theme.colors.surfaceSubdued,
+    backgroundColor: theme.colors.surfaceMuted,
   },
   skeletonSubtitle: {
     width: '50%',
     height: 12,
     borderRadius: theme.radius.sm,
-    backgroundColor: theme.colors.surfaceSubdued,
+    backgroundColor: theme.colors.surfaceMuted,
   },
 });

@@ -69,7 +69,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
             <Button 
               title="إلغاء الطلب" 
               hierarchy="secondary" 
-              size="small"
+              size="medium"
               style={styles.actionBtn}
               onPress={() => {}} 
             />
@@ -77,7 +77,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
           <Button 
             title="عرض التفاصيل" 
             hierarchy={status === 'pending' ? 'primary' : 'secondary'} 
-            size="small"
+            size="medium"
             style={styles.actionBtn}
             onPress={() => {}} 
           />
@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   address: {
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: theme.spacing[4],
+    marginBottom: theme.spacing[8],
   },
   priceRow: {
     flexDirection: 'row',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   dateItem: {
-    gap: 4,
+    gap: theme.spacing[4],
   },
   actions: {
     flexDirection: 'row',

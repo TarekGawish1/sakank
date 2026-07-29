@@ -40,6 +40,9 @@ export const colors = {
   // Surface
   surfaceDefault: palette.neutral0,
   surfaceSubdued: palette.neutral50,
+  surfaceMuted: palette.neutral100,
+  surfaceNeutral: palette.neutral100,
+  surfaceBackground: palette.neutral50,
   surfacePrimary: palette.blue500,
   surfacePrimaryHover: palette.blue600,
   surfacePrimaryPressed: palette.blue700,
@@ -47,6 +50,11 @@ export const colors = {
   surfaceInverse: palette.neutral900,
   surfaceDisabled: palette.neutral100,
   surfaceErrorSubtle: palette.red50,
+  surfaceError: palette.red50,
+  surfaceSuccessSubtle: palette.green50,
+  surfaceSuccess: palette.green50,
+  surfaceWarningSubtle: palette.orange50,
+  surfaceWarning: palette.orange50,
 
   // Text
   textPrimary: palette.neutral900,
@@ -55,6 +63,9 @@ export const colors = {
   textInverse: palette.neutral0,
   textBrand: palette.blue500,
   textError: palette.red500,
+  textSuccess: palette.green700,
+  textWarning: palette.orange700,
+  textMuted: palette.neutral400,
 
   // Border
   borderSubtle: palette.neutral200,

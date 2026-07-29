@@ -49,7 +49,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         <View style={styles.topLeftOverlay}>
           {featured && (
             <View style={styles.featuredBadge}>
-              <AppText variant="caption" style={styles.featuredText}>مميز</AppText>
+              <AppText variant="caption" weight="bold" color="textPrimary">مميز</AppText>
             </View>
           )}
         </View>
@@ -72,19 +72,19 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 
         {!available && (
           <View style={styles.unavailableOverlay}>
-            <AppText variant="label" color="inverse">غير متوفر</AppText>
+            <AppText variant="label" color="textInverse">غير متوفر</AppText>
           </View>
         )}
       </View>
 
       <View style={styles.content}>
         <View style={styles.headerRow}>
-          <AppText variant="bodySm" color="textPrimary" numberOfLines={1} style={styles.title}>
+          <AppText variant="bodySm" color="textPrimary" weight="bold" numberOfLines={1} style={styles.title}>
             {title}
           </AppText>
           <View style={styles.ratingBox}>
-            <AppIcon name="Star" size="xs" color="textPrimary" />
-            <AppText variant="caption" color="textPrimary" style={styles.ratingText}>
+            <AppIcon name="Star" size="xs" color="warning" />
+            <AppText variant="caption" color="textPrimary" weight="medium">
               {rating !== undefined ? rating : '5.0'}
             </AppText>
           </View>
@@ -95,10 +95,10 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         </AppText>
 
         <View style={styles.priceRow}>
-          <AppText variant="bodySm" color="textPrimary" style={styles.price}>
+          <AppText variant="bodySm" color="textPrimary" weight="bold">
             {price}
           </AppText>
-          <AppText variant="bodySm" color="textPrimary">
+          <AppText variant="bodySm" color="textSecondary">
              {' '}{currency} / شهر
           </AppText>
         </View>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.xl,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: theme.colors.surfaceNeutral,
+    backgroundColor: theme.colors.surfaceMuted,
   },
   image: {
     width: '100%',
@@ -133,38 +133,27 @@ const styles = StyleSheet.create({
     left: theme.spacing[12],
   },
   featuredBadge: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.surfaceDefault,
     paddingHorizontal: theme.spacing[8],
     paddingVertical: theme.spacing[4],
     borderRadius: theme.radius.full,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  featuredText: {
-    fontWeight: '700',
-    color: theme.colors.textPrimary,
+    ...theme.elevation.sm,
   },
   favoriteButton: {
     position: 'absolute',
     top: theme.spacing[12],
     right: theme.spacing[12],
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
+    ...theme.elevation.md,
   },
   unavailableOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    ...StyleSheet.absoluteFill,
+    backgroundColor: theme.palette.neutral1000,
+    opacity: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
   content: {
-    gap: 2,
+    gap: theme.spacing[2],
     paddingHorizontal: theme.spacing[2],
   },
   headerRow: {
@@ -175,25 +164,18 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     marginRight: theme.spacing[8],
-    fontWeight: '700',
   },
   ratingBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
-  },
-  ratingText: {
-    fontWeight: '500',
+    gap: theme.spacing[2],
   },
   location: {
-    marginTop: 2,
+    marginTop: theme.spacing[2],
   },
   priceRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginTop: 4,
+    marginTop: theme.spacing[4],
   },
-  price: {
-    fontWeight: '700',
-  }
 });

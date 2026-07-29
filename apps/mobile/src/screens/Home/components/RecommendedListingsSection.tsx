@@ -4,7 +4,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard, AppIcon } from '../../../components';
 import { ListingFeedItem } from '../../../api/listings.api';
-import { RootStackParamList } from '../../../navigation/RootNavigator';
+import { HomeStackParamList } from '../../../navigation/types';
 import { useFavorites, useToggleFavorite } from '../../../hooks/favorites';
 
 interface RecommendedListingsSectionProps {
@@ -12,7 +12,7 @@ interface RecommendedListingsSectionProps {
 }
 
 export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProps> = ({ data }) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
   const { data: favoritesData } = useFavorites();
   const { mutate: toggleFavorite } = useToggleFavorite();
   
@@ -29,7 +29,7 @@ export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProp
           <AppText variant="bodyBase" color="textSecondary" style={styles.subtitle}>بناءً على بحثك الأخير</AppText>
         </View>
         <Pressable style={styles.arrowButton}>
-          <AppIcon name="ArrowLeft" size="sm" color="textPrimary" />
+          <AppIcon name="ArrowLeft" size="sm" color="primary" />
         </Pressable>
       </View>
       <ScrollView

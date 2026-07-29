@@ -234,7 +234,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
 
         <View style={styles.footer}>
           <View style={styles.applyBtnWrapper}>
-            <Button title="تطبيق الفلاتر" onPress={() => { onApply(); onClose(); }} fullWidth />
+            <Button title="تطبيق الفلاتر" onPress={() => { onApply(); onClose(); }} />
           </View>
           <Pressable style={styles.resetBtn} onPress={handleReset}>
             <AppText variant="button" color="textPrimary">

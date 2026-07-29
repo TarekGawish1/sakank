@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
-import { AppText } from '../../../components';
+import { Chip } from '../../../components';
 
 export type FilterType = 'all' | 'pending' | 'accepted' | 'rejected' | 'cancelled';
 
@@ -27,24 +27,14 @@ export const FilterChips = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
-      {FILTERS.map(filter => {
-        const isSelected = selectedFilter === filter.id;
-        return (
-          <Pressable 
-            key={filter.id} 
-            style={[styles.chip, isSelected && styles.chipSelected]}
-            onPress={() => {}}
-          >
-            <AppText 
-              variant="label" 
-              weight={isSelected ? 'bold' : 'medium'}
-              color={isSelected ? 'inverse' : 'textSecondary'}
-            >
-              {filter.label}
-            </AppText>
-          </Pressable>
-        );
-      })}
+      {FILTERS.map(filter => (
+        <Chip
+          key={filter.id}
+          label={filter.label}
+          selected={selectedFilter === filter.id}
+          onPress={() => {}}
+        />
+      ))}
     </ScrollView>
   );
 };
@@ -54,16 +44,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing[24],
     gap: theme.spacing[8],
   },
-  chip: {
-    paddingHorizontal: theme.spacing[16],
-    paddingVertical: theme.spacing[8],
-    borderRadius: theme.radius.full,
-    borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-    backgroundColor: theme.colors.surfaceDefault,
-  },
-  chipSelected: {
-    backgroundColor: theme.colors.brandPrimary,
-    borderColor: theme.colors.brandPrimary,
-  }
 });

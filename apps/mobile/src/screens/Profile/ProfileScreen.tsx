@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useSession } from '../../hooks/auth/useSession';
-import { AppText, Avatar, Button, Spinner, AppIcon } from '../../components';
+import { AppText, Avatar, Button, Spinner, AppIcon, EmptyState } from '../../components';
 import { theme } from '../../theme';
 
 export const ProfileScreen = () => {
@@ -10,12 +10,12 @@ export const ProfileScreen = () => {
   if (isGuest && !user) {
     return (
       <View style={styles.centerContainer}>
-        <AppIcon name="User" size="xl" color="tertiary" />
-        <AppText variant="title2" style={{ marginTop: 16, marginBottom: 8 }}>حسابي</AppText>
-        <AppText variant="bodyBase" color="textSecondary" style={{ marginBottom: 24 }}>يرجى تسجيل الدخول لعرض تفاصيل حسابك</AppText>
-        <Button 
-          title="تسجيل الدخول" 
-          onPress={() => logout()} 
+        <EmptyState
+          icon="User"
+          title="حسابي"
+          description="يرجى تسجيل الدخول لعرض تفاصيل حسابك"
+          primaryButtonTitle="تسجيل الدخول"
+          primaryButtonOnPress={() => logout()}
         />
       </View>
     );
@@ -32,7 +32,11 @@ export const ProfileScreen = () => {
   if (isSessionError || !user) {
     return (
       <View style={styles.centerContainer}>
-        <AppText color="error">فشل في تحميل بيانات الحساب</AppText>
+        <EmptyState
+          icon="AlertCircle"
+          title="فشل في تحميل البيانات"
+          description="حدث خطأ أثناء تحميل بيانات الحساب"
+        />
       </View>
     );
   }
@@ -80,7 +84,7 @@ export const ProfileScreen = () => {
 
       <Button
         title="تسجيل الخروج"
-        variant="outline"
+        hierarchy="secondary"
         onPress={() => logout()}
         loading={isLoggingOut}
         style={styles.logoutButton}
@@ -94,11 +98,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.surfaceBackground,
+    backgroundColor: theme.colors.surfaceSubdued,
   },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surfaceBackground,
+    backgroundColor: theme.colors.surfaceSubdued,
   },
   content: {
     padding: theme.spacing[16],
@@ -132,6 +136,6 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.borderSubtle,
   },
   logoutButton: {
-    marginTop: 'auto',
+    marginTop: theme.spacing[16],
   },
 });

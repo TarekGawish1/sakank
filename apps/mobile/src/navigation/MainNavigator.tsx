@@ -24,12 +24,12 @@ export const MainNavigator = () => {
           backgroundColor: theme.colors.surfaceDefault,
           borderTopColor: theme.colors.borderSubtle,
           height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          paddingBottom: theme.spacing[8],
+          paddingTop: theme.spacing[8],
         },
         tabBarLabelStyle: {
           fontFamily: theme.fonts.arabic,
-          fontSize: 12,
+          fontSize: theme.typography.caption.fontSize,
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any = 'Home';
@@ -46,7 +46,7 @@ export const MainNavigator = () => {
             iconName = 'User';
           }
 
-          return <AppIcon name={iconName} size="md" color={focused ? 'brandPrimary' : 'tertiary'} />;
+          return <AppIcon name={iconName} size="md" color={focused ? 'primary' : 'tertiary'} />;
         },
       })}
     >

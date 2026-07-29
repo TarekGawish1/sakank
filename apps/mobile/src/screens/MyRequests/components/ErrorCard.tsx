@@ -20,7 +20,6 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({ onRetry }) => {
         </AppText>
         <Button
           title="إعادة المحاولة"
-          onRetry={onRetry}
           hierarchy="secondary"
           onPress={onRetry}
         />

@@ -45,11 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceDefault,
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderSubtle,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: -5 },
-    elevation: 10,
+    ...theme.elevation.md,
     gap: theme.spacing[16],
   },
   shareBtn: {
