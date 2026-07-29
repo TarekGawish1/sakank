@@ -9,5 +9,6 @@ export const useListing = (id?: string) => {
       return ListingsApi.getListingById(id);
     },
     enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

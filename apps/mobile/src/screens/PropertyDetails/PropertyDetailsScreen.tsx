@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../../navigation/types';
 import { theme } from '../../theme';
@@ -20,11 +20,12 @@ import {
 } from './components';
 
 type PropertyDetailsNavProp = NativeStackNavigationProp<HomeStackParamList>;
+type PropertyDetailsRouteProp = RouteProp<HomeStackParamList, 'PropertyDetails'>;
 
 export const PropertyDetailsScreen: React.FC = () => {
-  const route = useRoute();
+  const route = useRoute<PropertyDetailsRouteProp>();
   const navigation = useNavigation<PropertyDetailsNavProp>();
-  const { listingId } = (route.params as { listingId: string }) || {};
+  const { listingId } = route.params;
 
   const { data: listing, isLoading, isError, refetch } = useListing(listingId);
   const { isAuthenticated } = useSession();
