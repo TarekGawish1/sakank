@@ -24,6 +24,9 @@
     "updates": {
       "enabled": false
     },
+    "extra": {
+      "supportsRTL": true
+    },
     "plugins": [
       "expo-font",
       "expo-status-bar",
