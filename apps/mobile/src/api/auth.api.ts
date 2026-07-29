@@ -7,6 +7,12 @@ export interface AuthUser {
   id: string;
   role: string;
   isCompleted: boolean;
+  firstName?: string;
+  lastName?: string;
+  email?: string | null;
+  phone?: string;
+  gender?: string;
+  isActive?: boolean;
 }
 
 export interface AuthTokens {
