@@ -54,6 +54,16 @@ export const adminController = {
     }
   },
 
+  updateProperty: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { title } = req.body;
+      const result = await adminService.updatePropertyTitle(req.params.id, title);
+      return sendSuccess(res, result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   listPendingVerifications: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = Number(req.query.page) || 1;

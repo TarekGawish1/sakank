@@ -119,6 +119,13 @@ export const adminRepository = {
     });
   },
 
+  updatePropertyTitle: async (id: string, title: string) => {
+    return prisma.property.update({
+      where: { id },
+      data: { title },
+    });
+  },
+
   findPendingVerifications: async (page: number, limit: number) => {
     const [requests, total] = await Promise.all([
       prisma.verificationRequest.findMany({

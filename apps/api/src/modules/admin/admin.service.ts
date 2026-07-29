@@ -61,6 +61,12 @@ export const adminService = {
     return { id: propertyId, message: 'Property deleted successfully' };
   },
 
+  updatePropertyTitle: async (propertyId: string, title: string) => {
+    const updated = await adminRepository.updatePropertyTitle(propertyId, title);
+    if (!updated) throw new NotFoundError('Property');
+    return { id: propertyId, title: updated.title };
+  },
+
   listPendingVerifications: async (
     page: number,
     limit: number,

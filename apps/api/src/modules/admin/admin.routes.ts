@@ -30,6 +30,9 @@ router.get('/properties', adminController.listProperties);
 // DELETE /api/v1/admin/properties/:id
 router.delete('/properties/:id', adminController.deleteProperty);
 
+// PUT /api/v1/admin/properties/:id
+router.put('/properties/:id', adminController.updateProperty);
+
 // GET /api/v1/admin/verifications — List pending verifications
 router.get(
   '/verifications',
