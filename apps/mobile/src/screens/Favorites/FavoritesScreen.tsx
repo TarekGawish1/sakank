@@ -3,11 +3,13 @@ import { SafeAreaView, View, StyleSheet, ScrollView, RefreshControl } from 'reac
 import { theme } from '../../theme';
 import { AppText, Button, Card, ListingCard, AppIcon } from '../../components';
 import { useFavorites, useToggleFavorite } from '../../hooks/favorites';
+import { useSession } from '../../hooks/auth/useSession';
 import { ListingFeedItem } from '../../api/listings.api';
 
 export const FavoritesScreen: React.FC = () => {
   const { data, isLoading, isError, refetch, isRefetching } = useFavorites();
   const { mutate: toggleFavorite } = useToggleFavorite();
+  const { user, isGuest, logout } = useSession();
 
   const favorites = data?.items || [];
 
@@ -109,6 +111,29 @@ export const FavoritesScreen: React.FC = () => {
   );
 
   const renderContent = () => {
+    if (isGuest && !user) {
+      return (
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyIconContainer}>
+            <AppIcon name="HeartOff" size="xl" color="tertiary" />
+          </View>
+          <AppText variant="title2" color="textPrimary" weight="bold" style={styles.emptyTitle}>
+            يرجى تسجيل الدخول
+          </AppText>
+          <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.emptyDesc}>
+            يجب عليك تسجيل الدخول لعرض قائمة مفضلتك
+          </AppText>
+          <Button
+            title="تسجيل الدخول"
+            onPress={() => logout()}
+            hierarchy="primary"
+            size="large"
+            style={styles.exploreButton}
+          />
+        </View>
+      );
+    }
+
     if (isLoading && !isRefetching) return renderLoadingSkeleton();
     if (isError) return renderErrorState();
     if (favorites.length === 0) return renderEmptyState();

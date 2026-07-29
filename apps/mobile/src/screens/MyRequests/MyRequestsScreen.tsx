@@ -11,10 +11,13 @@ import {
 } from './components';
 import { RequestStatus } from './components/StatusBadge';
 import { useMyStayRequests } from '../../hooks/stayRequests';
+import { useSession } from '../../hooks/auth/useSession';
 import { StayRequestResponse } from '../../api/stayRequests.api';
+import { AppIcon, Button } from '../../components';
 
 export const MyRequestsScreen: React.FC = () => {
   const { data, isLoading, isError, refetch, isRefetching } = useMyStayRequests();
+  const { user, isGuest, logout } = useSession();
 
   const requests = data?.items || [];
 
@@ -43,6 +46,29 @@ export const MyRequestsScreen: React.FC = () => {
   );
 
   const renderContent = () => {
+    if (isGuest && !user) {
+      return (
+        <View style={styles.guestContainer}>
+          <View style={styles.guestIconContainer}>
+            <AppIcon name="AlertCircle" size="xl" color="tertiary" />
+          </View>
+          <AppText variant="title2" color="textPrimary" weight="bold" style={styles.guestTitle}>
+            يرجى تسجيل الدخول
+          </AppText>
+          <AppText variant="bodyBase" color="textSecondary" align="center" style={styles.guestDesc}>
+            يجب عليك تسجيل الدخول لعرض طلباتك
+          </AppText>
+          <Button
+            title="تسجيل الدخول"
+            onPress={() => logout()}
+            hierarchy="primary"
+            size="large"
+            style={styles.guestButton}
+          />
+        </View>
+      );
+    }
+
     if (isLoading && !isRefetching) {
       return <RequestsSkeleton />;
     }
@@ -109,5 +135,29 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: theme.spacing[24],
+  },
+  guestContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: theme.spacing[32],
+  },
+  guestIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: theme.colors.surfaceDefault,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing[24],
+  },
+  guestTitle: {
+    marginBottom: theme.spacing[8],
+  },
+  guestDesc: {
+    marginBottom: theme.spacing[32],
+  },
+  guestButton: {
+    width: '100%',
   }
 });
