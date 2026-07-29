@@ -1,14 +1,18 @@
-// import { apiClient } from './client';
-// import { ENDPOINTS } from './endpoints';
+import { apiClient } from './client';
+import { ENDPOINTS } from './endpoints';
+import { ListingsResponse } from './listings.api';
 
 export const FavoritesApi = {
-  getFavorites: async (params?: any): Promise<any> => {
-    // return apiClient.get(ENDPOINTS.FAVORITES.BASE, { params });
-    throw new Error('Not implemented');
+  getFavorites: async (params?: any): Promise<ListingsResponse> => {
+    const response = await apiClient.get<any>(ENDPOINTS.FAVORITES.BASE, { params });
+    return {
+      items: response.data || [],
+      meta: response.meta || { cursor: null, limit: 20, hasMore: false }
+    };
   },
 
   toggleFavorite: async (listingId: string): Promise<any> => {
-    // return apiClient.post(ENDPOINTS.FAVORITES.TOGGLE(listingId));
-    throw new Error('Not implemented');
+    const response = await apiClient.post<any>(ENDPOINTS.FAVORITES.TOGGLE(listingId));
+    return response.data;
   }
 };

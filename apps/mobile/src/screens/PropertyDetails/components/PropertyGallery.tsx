@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppIcon } from '../../../components';
 import { ListingDetails } from '../../../api/listings.api';
+import { useToggleFavorite } from '../../../hooks/favorites';
 
 interface PropertyGalleryProps {
   listing: ListingDetails;
@@ -11,7 +12,10 @@ interface PropertyGalleryProps {
 
 export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ listing }) => {
   const navigation = useNavigation();
-  const imageUri = listing.images?.[0] || listing.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+  const { mutate: toggleFavorite } = useToggleFavorite();
+
+  const firstImage = listing.images?.[0];
+  const imageUri = (typeof firstImage === 'string' ? firstImage : firstImage?.url) || listing.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
 
   return (
     <View style={styles.container}>
@@ -27,8 +31,15 @@ export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ listing }) => 
         >
           <AppIcon name="ChevronLeft" size="md" color="primary" />
         </Pressable>
-        <Pressable style={styles.iconButton}>
-          <AppIcon name="Heart" size="md" color="primary" />
+        <Pressable 
+          style={styles.iconButton} 
+          onPress={() => toggleFavorite(listing.id)}
+        >
+          <AppIcon 
+            name="Heart" 
+            size="md" 
+            color={(listing as any).isFavorited ? 'error' : 'primary'} 
+          />
         </Pressable>
       </View>
     </View>

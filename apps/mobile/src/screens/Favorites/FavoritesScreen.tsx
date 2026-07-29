@@ -1,68 +1,15 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React from 'react';
+import { SafeAreaView, View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { theme } from '../../theme';
 import { AppText, Button, Card, ListingCard, AppIcon } from '../../components';
-
-interface MockListing {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  image: string;
-  rating: number;
-  featured?: boolean;
-}
-
-const MOCK_TODAY: MockListing[] = [
-  {
-    id: '1',
-    title: 'فيلا فاخرة',
-    location: '5 غرف • جديد',
-    price: '2,500,000',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    rating: 5.0,
-  },
-  {
-    id: '2',
-    title: 'شقة مودرن',
-    location: 'غرفة 1 • 5.0',
-    price: '85,000',
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    rating: 4.5,
-  }
-];
-
-const MOCK_YESTERDAY: MockListing[] = [
-  {
-    id: '3',
-    title: 'دور أرضي',
-    location: '4.99 • عائلية',
-    price: '1,200,000',
-    image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    rating: 4.99,
-  },
-  {
-    id: '4',
-    title: 'شقة استوديو',
-    location: 'غرفة 1 • 4.96',
-    price: '45,000',
-    image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    rating: 4.96,
-  },
-  {
-    id: '5',
-    title: 'غرفة فندقية',
-    location: 'سرير 1',
-    price: '30,000',
-    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    rating: 4.8,
-  }
-];
-
-type ViewState = 'loading' | 'error' | 'empty' | 'data';
+import { useFavorites, useToggleFavorite } from '../../hooks/favorites';
+import { ListingFeedItem } from '../../api/listings.api';
 
 export const FavoritesScreen: React.FC = () => {
-  const [viewState, setViewState] = useState<ViewState>('data');
+  const { data, isLoading, isError, refetch, isRefetching } = useFavorites();
+  const { mutate: toggleFavorite } = useToggleFavorite();
+
+  const favorites = data?.items || [];
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -75,28 +22,33 @@ export const FavoritesScreen: React.FC = () => {
     </View>
   );
 
-  const renderGridSection = (title: string, data: MockListing[]) => (
-    <View style={styles.sectionContainer}>
-      <AppText variant="title2" color="textPrimary" weight="bold" style={styles.sectionTitle}>
-        {title}
-      </AppText>
-      <View style={styles.grid}>
-        {data.map((item) => (
-          <View key={item.id} style={styles.gridItem}>
-            <ListingCard
-              image={item.image}
-              title={item.title}
-              location={item.location}
-              price={item.price}
-              rating={item.rating}
-              favorite={true}
-              onFavoritePress={() => {}}
-            />
-          </View>
-        ))}
+  const renderGridSection = (title: string, data: ListingFeedItem[]) => {
+    if (data.length === 0) return null;
+    
+    return (
+      <View style={styles.sectionContainer}>
+        <AppText variant="title2" color="textPrimary" weight="bold" style={styles.sectionTitle}>
+          {title}
+        </AppText>
+        <View style={styles.grid}>
+          {data.map((item) => (
+            <View key={item.id} style={styles.gridItem}>
+              <ListingCard
+                image={item.primaryImage || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'}
+                title={item.title}
+                location={`${typeof item.location.area === 'object' ? (item.location.area as any).name : item.location.area}، ${typeof item.location.city === 'object' ? (item.location.city as any).name : item.location.city}`}
+                price={item.monthlyRent}
+                featured={item.isFeatured}
+                available={item.availabilityStatus === 'AVAILABLE' || item.availabilityStatus === 'متاح'}
+                favorite={true}
+                onFavoritePress={() => toggleFavorite(item.id)}
+              />
+            </View>
+          ))}
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -131,7 +83,7 @@ export const FavoritesScreen: React.FC = () => {
         </AppText>
         <Button
           title="إعادة المحاولة"
-          onPress={() => setViewState('loading')}
+          onPress={() => refetch()}
           hierarchy="secondary"
         />
       </Card>
@@ -157,22 +109,26 @@ export const FavoritesScreen: React.FC = () => {
   );
 
   const renderContent = () => {
-    switch (viewState) {
-      case 'loading':
-        return renderLoadingSkeleton();
-      case 'error':
-        return renderErrorState();
-      case 'empty':
-        return renderEmptyState();
-      case 'data':
-      default:
-        return (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-            {renderGridSection('اليوم', MOCK_TODAY)}
-            {renderGridSection('الأمس', MOCK_YESTERDAY)}
-          </ScrollView>
-        );
-    }
+    if (isLoading && !isRefetching) return renderLoadingSkeleton();
+    if (isError) return renderErrorState();
+    if (favorites.length === 0) return renderEmptyState();
+
+    return (
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefetching} 
+            onRefresh={refetch} 
+            colors={[theme.colors.surfacePrimary]} 
+            tintColor={theme.colors.surfacePrimary} 
+          />
+        }
+      >
+        {renderGridSection('عقاراتك المحفوظة', favorites)}
+      </ScrollView>
+    );
   };
 
   return (

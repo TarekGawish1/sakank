@@ -5,6 +5,7 @@ import { theme } from '../../../theme';
 import { AppText, ListingCard, AppIcon } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
 import { RootStackParamList } from '../../../../navigation/RootNavigator';
+import { useFavorites, useToggleFavorite } from '../../../../hooks/favorites';
 
 interface RecommendedListingsSectionProps {
   data: ListingFeedItem[];
@@ -12,6 +13,10 @@ interface RecommendedListingsSectionProps {
 
 export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProps> = ({ data }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { data: favoritesData } = useFavorites();
+  const { mutate: toggleFavorite } = useToggleFavorite();
+  
+  const favoriteIds = new Set(favoritesData?.items?.map(f => f.id) || []);
   const recommended = data.slice(8, 14);
 
   if (recommended.length === 0) return null;
@@ -37,12 +42,13 @@ export const RecommendedListingsSection: React.FC<RecommendedListingsSectionProp
             <ListingCard
               image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
               title={item.title}
-              location={`${item.location.area}، ${item.location.city}`}
+              location={`${typeof item.location.area === 'object' ? (item.location.area as any).name : item.location.area}، ${typeof item.location.city === 'object' ? (item.location.city as any).name : item.location.city}`}
               price={item.monthlyRent}
-              available={item.availabilityStatus === 'AVAILABLE'}
+              favorite={favoriteIds.has(item.id)}
+              available={item.availabilityStatus === 'AVAILABLE' || item.availabilityStatus === 'متاح'}
               imageAspectRatio={1}
               onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
-              onFavoritePress={() => {}}
+              onFavoritePress={() => toggleFavorite(item.id)}
             />
           </View>
         ))}

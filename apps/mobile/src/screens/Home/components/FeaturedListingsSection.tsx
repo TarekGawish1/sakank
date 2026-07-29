@@ -5,6 +5,7 @@ import { theme } from '../../../theme';
 import { AppText, ListingCard, AppIcon } from '../../../components';
 import { ListingFeedItem } from '../../../../api/listings.api';
 import { RootStackParamList } from '../../../../navigation/RootNavigator';
+import { useFavorites, useToggleFavorite } from '../../../../hooks/favorites';
 
 interface FeaturedListingsSectionProps {
   data: ListingFeedItem[];
@@ -12,7 +13,11 @@ interface FeaturedListingsSectionProps {
 
 export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = ({ data }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const { data: favoritesData } = useFavorites();
+  const { mutate: toggleFavorite } = useToggleFavorite();
   
+  const favoriteIds = new Set(favoritesData?.items?.map(f => f.id) || []);
+
   const featured = data.filter(l => l.isFeatured).length > 0 
     ? data.filter(l => l.isFeatured) 
     : data.slice(0, 5);
@@ -42,13 +47,14 @@ export const FeaturedListingsSection: React.FC<FeaturedListingsSectionProps> = (
             <ListingCard
               image={item.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
               title={item.title}
-              location={`${item.location.area}، ${item.location.city}`}
+              location={`${typeof item.location.area === 'object' ? (item.location.area as any).name : item.location.area}، ${typeof item.location.city === 'object' ? (item.location.city as any).name : item.location.city}`}
               price={item.monthlyRent}
               featured={item.isFeatured}
-              available={item.availabilityStatus === 'AVAILABLE'}
+              favorite={favoriteIds.has(item.id)}
+              available={item.availabilityStatus === 'AVAILABLE' || item.availabilityStatus === 'متاح'}
               imageAspectRatio={1}
               onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
-              onFavoritePress={() => {}}
+              onFavoritePress={() => toggleFavorite(item.id)}
             />
           </View>
         ))}
