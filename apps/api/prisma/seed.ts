@@ -1,249 +1,287 @@
-import { PrismaClient, UserRole, Gender, PropertyType, ListingStatus, UnitType } from '@prisma/client';
+import { PrismaClient, UserRole, Gender, PropertyType, ListingStatus, UnitType, StayRequestStatus, NotificationType } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting HUGE database seeding...');
+  console.log('🧹 Clearing existing database records...');
 
-  // 1. Create Governorates, Cities, Areas
-  console.log('1. Seeding locations...');
-  const locations = [
+  // Delete in order of dependencies
+  await prisma.deviceToken.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.stayRequest.deleteMany();
+  await prisma.favorite.deleteMany();
+  await prisma.listing.deleteMany();
+  await prisma.unitImage.deleteMany();
+  await prisma.unit.deleteMany();
+  await prisma.propertyImage.deleteMany();
+  await prisma.property.deleteMany();
+  await prisma.verificationRequest.deleteMany();
+  await prisma.studentProfile.deleteMany();
+  await prisma.ownerProfile.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.university.deleteMany();
+  await prisma.area.deleteMany();
+  await prisma.city.deleteMany();
+  await prisma.governorate.deleteMany();
+
+  console.log('🌱 Starting MASSIVE fresh database seeding...');
+
+  // 1. Locations
+  console.log('1. Seeding Governorates, Cities, and Areas...');
+  const locationsData = [
     {
       name: 'القاهرة',
       cities: [
-        { name: 'مدينة نصر', areas: [{ name: 'مكرم عبيد' }, { name: 'عباس العقاد' }] },
-        { name: 'المعادي', areas: [{ name: 'دجلة' }, { name: 'المعادي الجديدة' }] },
+        { name: 'مدينة نصر', areas: ['مكرم عبيد', 'عباس العقاد', 'المنطقة السادسة', 'المنطقة الأولى'] },
+        { name: 'المعادي', areas: ['دجلة', 'المعادي الجديدة', 'زهراء المعادي', 'سارايات المعادي'] },
+        { name: 'التجمع الخامس', areas: ['النرجس', 'الياسمين', 'البنفسج', 'الحي الأول'] },
       ],
     },
     {
       name: 'الجيزة',
       cities: [
-        { name: 'الدقي', areas: [{ name: 'مصدق' }, { name: 'محي الدين أبو العز' }] },
-        { name: 'المهندسين', areas: [{ name: 'جامعة الدول' }, { name: 'البطل أحمد عبدالعزيز' }] },
+        { name: 'الدقي', areas: ['مصدق', 'محي الدين أبو العز', 'شارع التحرير'] },
+        { name: 'المهندسين', areas: ['جامعة الدول', 'البطل أحمد عبدالعزيز', 'شهاب', 'سوريا'] },
+        { name: '6 أكتوبر', areas: ['الحي المتميز', 'الحي الأول', 'الحي الرابع'] },
       ],
     },
     {
       name: 'الإسكندرية',
       cities: [
-        { name: 'سموحة', areas: [{ name: 'ميدان فيكتور عمانويل' }] },
-        { name: 'الشاطبي', areas: [{ name: 'مجمع الكليات' }] },
+        { name: 'سموحة', areas: ['ميدان فيكتور عمانويل', 'شارع ألبرت الأول'] },
+        { name: 'الشاطبي', areas: ['مجمع الكليات', 'شارع بورسعيد'] },
+        { name: 'ميامي', areas: ['شارع إسكندر إبراهيم', 'خالد بن الوليد'] },
       ],
     },
   ];
 
-  for (const loc of locations) {
-    const gov = await prisma.governorate.upsert({
-      where: { name: loc.name },
-      update: {},
-      create: { name: loc.name },
-    });
+  const createdAreas: { id: string; name: string; cityId: string; govId: string }[] = [];
+
+  for (const loc of locationsData) {
+    const gov = await prisma.governorate.create({ data: { name: loc.name } });
 
     for (const c of loc.cities) {
-      let city = await prisma.city.findFirst({ where: { name: c.name, governorateId: gov.id } });
-      if (!city) {
-        city = await prisma.city.create({ data: { name: c.name, governorateId: gov.id } });
-      }
+      const city = await prisma.city.create({ data: { name: c.name, governorateId: gov.id } });
 
-      for (const a of c.areas) {
-        let area = await prisma.area.findFirst({ where: { name: a.name, cityId: city.id } });
-        if (!area) {
-          area = await prisma.area.create({ data: { name: a.name, cityId: city.id } });
-        }
+      for (const areaName of c.areas) {
+        const area = await prisma.area.create({ data: { name: areaName, cityId: city.id } });
+        createdAreas.push({ id: area.id, name: area.name, cityId: city.id, govId: gov.id });
       }
     }
   }
 
-  // 2. Create Universities
-  console.log('2. Seeding universities...');
-  const govCairo = await prisma.governorate.findUnique({ where: { name: 'القاهرة' } });
-  const govGiza = await prisma.governorate.findUnique({ where: { name: 'الجيزة' } });
-  const govAlex = await prisma.governorate.findUnique({ where: { name: 'الإسكندرية' } });
-
-  const unis = [
-    { name: 'جامعة القاهرة', govId: govGiza!.id },
-    { name: 'جامعة عين شمس', govId: govCairo!.id },
-    { name: 'جامعة الإسكندرية', govId: govAlex!.id },
-    { name: 'جامعة حلوان', govId: govCairo!.id },
-  ];
-
-  for (const u of unis) {
-    let uni = await prisma.university.findFirst({ where: { name: u.name } });
-    if (!uni) {
-      uni = await prisma.university.create({ data: { name: u.name } });
-    }
+  // 2. Universities
+  console.log('2. Seeding Universities...');
+  const unisData = ['جامعة القاهرة', 'جامعة عين شمس', 'جامعة الإسكندرية', 'جامعة حلوان', 'الجامعة الأمريكية بالقاهرة', 'جامعة 6 أكتوبر'];
+  const createdUnis = [];
+  for (const name of unisData) {
+    const uni = await prisma.university.create({ data: { name } });
+    createdUnis.push(uni);
   }
 
-  // 3. Create Users
-  console.log('3. Seeding users...');
+  // 3. Users (Admin, Students, Owners)
+  console.log('3. Seeding Admin, Students, and Owners...');
   const password = await bcrypt.hash('password123', 12);
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@sakank.com' },
-    update: {},
-    create: {
+
+  // Admin
+  const admin = await prisma.user.create({
+    data: {
       email: 'admin@sakank.com',
       password,
       phone: '+201000000001',
       firstName: 'Admin',
-      lastName: 'User',
+      lastName: 'System',
       gender: Gender.MALE,
       role: UserRole.ADMIN,
       emailVerifiedAt: new Date(),
     },
   });
 
-  const allUnis = await prisma.university.findMany();
-  
-  // 10 Students
-  for (let i = 1; i <= 10; i++) {
-    await prisma.user.upsert({
-      where: { email: `student${i}@sakank.com` },
-      update: {},
-      create: {
+  // 20 Students
+  const createdStudents = [];
+  for (let i = 1; i <= 20; i++) {
+    const student = await prisma.user.create({
+      data: {
         email: `student${i}@sakank.com`,
         password,
         phone: `+2010111111${i.toString().padStart(2, '0')}`,
-        firstName: `Student${i}`,
-        lastName: `Demo`,
+        firstName: `طالب_${i}`,
+        lastName: `أحمد`,
         gender: i % 2 === 0 ? Gender.FEMALE : Gender.MALE,
         role: UserRole.STUDENT,
         emailVerifiedAt: new Date(),
         studentProfile: {
           create: {
-            universityId: allUnis[i % allUnis.length].id,
-            faculty: 'هندسة',
+            universityId: createdUnis[i % createdUnis.length].id,
+            faculty: i % 2 === 0 ? 'كلية الهندسة' : 'كلية الحاسبات والمعلومات',
+            academicYear: `السنة ${((i % 4) + 1)}`,
           },
         },
       },
+      include: { studentProfile: true },
     });
+    createdStudents.push(student);
   }
 
-  // 10 Owners
-  const owners = [];
-  for (let i = 1; i <= 10; i++) {
-    const owner = await prisma.user.upsert({
-      where: { email: `owner${i}@sakank.com` },
-      update: {},
-      create: {
+  // 20 Owners
+  const createdOwners = [];
+  for (let i = 1; i <= 20; i++) {
+    const owner = await prisma.user.create({
+      data: {
         email: `owner${i}@sakank.com`,
         password,
         phone: `+2010222222${i.toString().padStart(2, '0')}`,
-        firstName: `Owner${i}`,
-        lastName: `Demo`,
+        firstName: `مالك_${i}`,
+        lastName: `محمود`,
         gender: Gender.MALE,
         role: UserRole.OWNER,
         emailVerifiedAt: new Date(),
         ownerProfile: {
           create: {
-            nationalId: `999956789012${i.toString().padStart(2, '0')}`,
+            nationalId: `298010112345${i.toString().padStart(2, '0')}`,
           },
         },
       },
+      include: { ownerProfile: true },
     });
-    owners.push(owner);
+    createdOwners.push(owner);
   }
 
-  // 4. Create Properties & Listings
-  console.log('4. Seeding properties and listings...');
-  const allCities = await prisma.city.findMany({ include: { areas: true } });
-  
+  // 4. Properties, Units & Listings
+  console.log('4. Seeding Properties, Units & Listings...');
   let propertyCount = 0;
-  for (const owner of owners) {
-    const ownerProfile = await prisma.ownerProfile.findUnique({ where: { userId: owner.id } });
-    if (!ownerProfile) continue;
+  let listingCount = 0;
+  const createdListings = [];
 
-    // Each owner creates 3 properties
+  for (const owner of createdOwners) {
+    if (!owner.ownerProfile) continue;
+
+    // 3 properties per owner = 60 properties total
     for (let p = 1; p <= 3; p++) {
       propertyCount++;
-      const city = allCities[propertyCount % allCities.length];
-      const area = city.areas.length > 0 ? city.areas[0] : null;
-      if (!area) continue;
+      const selectedArea = createdAreas[propertyCount % createdAreas.length];
 
-      const property = await prisma.property.upsert({
-        where: { id: `huge-seed-property-${propertyCount}` },
-        update: {},
-        create: {
-          id: `huge-seed-property-${propertyCount}`,
-          ownerProfileId: ownerProfile.id,
-          title: `عمارة سكنية في ${city.name} - ${p}`,
-          description: `سكن راقي وممتاز للطلاب، قريب جدا من المواصلات والخدمات في منطقة ${area.name}.`,
-          address: `شارع ${p} الرئيسي`,
-          latitude: 30.0 + Math.random() * 0.1,
-          longitude: 31.2 + Math.random() * 0.1,
+      const property = await prisma.property.create({
+        data: {
+          ownerProfileId: owner.ownerProfile.id,
+          title: `سكن طلابي متميز - عمارة رقم ${propertyCount}`,
+          description: `عمارة مجهزة بالكامل للطلاب في ${selectedArea.name}، شاملة الكهرباء والماء والإنترنت عالي السرعة. قريبة جداً من المواصلات.`,
+          address: `شارع ${p * 5}، بالقرب من المركز الرئيسي`,
+          latitude: 30.0444 + (Math.random() - 0.5) * 0.1,
+          longitude: 31.2357 + (Math.random() - 0.5) * 0.1,
           propertyType: p % 2 === 0 ? PropertyType.VILLA : PropertyType.APARTMENT_BUILDING,
-          governorateId: city.governorateId,
-          cityId: city.id,
-          areaId: area.id,
+          governorateId: selectedArea.govId,
+          cityId: selectedArea.cityId,
+          areaId: selectedArea.id,
           images: {
             create: [
-              { url: `https://loremflickr.com/600/400/apartment?lock=${propertyCount}1`, isPrimary: true, displayOrder: 0 },
-              { url: `https://loremflickr.com/600/400/apartment?lock=${propertyCount}2`, isPrimary: false, displayOrder: 1 }
+              { url: `https://loremflickr.com/800/600/apartment?lock=${propertyCount}1`, isPrimary: true, displayOrder: 0 },
+              { url: `https://loremflickr.com/800/600/building?lock=${propertyCount}2`, isPrimary: false, displayOrder: 1 },
             ],
           },
         },
       });
 
-      // Create 2 Units per property
+      // 2 units per property = 120 units total
       for (let u = 1; u <= 2; u++) {
-        const unitId = `huge-seed-unit-${propertyCount}-${u}`;
-        const unitType = u === 1 ? UnitType.APARTMENT : UnitType.ROOM;
-        
-        const unit = await prisma.unit.upsert({
-          where: {
-            uq_unit_property_id_unit_number: {
-              propertyId: property.id,
-              unitNumber: `U-${u}`,
-            },
-          },
-          update: {},
-          create: {
+        listingCount++;
+        const isApartment = u === 1;
+
+        const unit = await prisma.unit.create({
+          data: {
             propertyId: property.id,
-            unitNumber: `U-${u}`,
-            title: unitType === UnitType.APARTMENT ? 'شقة فاخرة للإيجار' : 'غرفة مشتركة للطلاب',
-            description: 'تشطيب سوبر لوكس، يوجد جميع الأجهزة الكهربائية.',
-            monthlyRent: 2000 + Math.floor(Math.random() * 5000),
-            securityDeposit: 3000,
-            capacity: u === 1 ? 4 : 2,
-            availableBeds: u === 1 ? 4 : 1,
+            unitNumber: `شقة-${u}0${p}`,
+            title: isApartment ? `شقة سكنية بالكامل ${p}0${u}` : `غرفة سريرين للطلاب`,
+            description: isApartment ? 'شقة تشطيب جديد تحتوي على 3 غرف وصالة وحمامين ومطبخ مجهز.' : 'غرفة مكيفة ومجهزة بأسرة ومكاتب للمذاكرة.',
+            monthlyRent: 1500 + Math.floor(Math.random() * 4500),
+            securityDeposit: 2000,
+            capacity: isApartment ? 4 : 2,
+            availableBeds: isApartment ? 4 : 2,
             availableFrom: new Date(),
-            unitType: unitType,
+            unitType: isApartment ? UnitType.APARTMENT : UnitType.ROOM,
             genderRestriction: u % 2 === 0 ? 'FEMALE' : 'MALE',
             availabilityStatus: 'AVAILABLE',
             images: {
-              create: [{ url: `https://loremflickr.com/600/400/room?lock=${propertyCount}${u}`, isPrimary: true, displayOrder: 0 }],
+              create: [
+                { url: `https://loremflickr.com/800/600/room?lock=${listingCount}1`, isPrimary: true, displayOrder: 0 },
+                { url: `https://loremflickr.com/800/600/bedroom?lock=${listingCount}2`, isPrimary: false, displayOrder: 1 },
+              ],
             },
           },
         });
 
-        // Create Listing for the Unit
-        await prisma.listing.upsert({
-          where: { id: `huge-seed-listing-${propertyCount}-${u}` },
-          update: {},
-          create: {
-            id: `huge-seed-listing-${propertyCount}-${u}`,
+        const listing = await prisma.listing.create({
+          data: {
             unitId: unit.id,
             status: ListingStatus.PUBLISHED,
             publishedAt: new Date(),
           },
         });
+        createdListings.push(listing);
       }
     }
   }
 
-  console.log('✅ HUGE Seeding completed successfully!');
-  console.log('--- Quick Stats ---');
-  console.log('Admins: 1');
-  console.log('Students: 10 (student1@sakank.com to student10@sakank.com)');
-  console.log('Owners: 10 (owner1@sakank.com to owner10@sakank.com)');
-  console.log(`Properties: ${propertyCount}`);
-  console.log(`Listings: ${propertyCount * 2}`);
-  console.log('Password for ALL users: password123');
+  // 5. Seed Interactions (Favorites, Stay Requests, Notifications)
+  console.log('5. Seeding Student Favorites & Stay Requests...');
+
+  for (let i = 0; i < createdStudents.length; i++) {
+    const student = createdStudents[i];
+    if (!student.studentProfile) continue;
+
+    // Add 2 favorites per student
+    const favListing1 = createdListings[i % createdListings.length];
+    const favListing2 = createdListings[(i + 5) % createdListings.length];
+
+    await prisma.favorite.createMany({
+      data: [
+        { studentProfileId: student.studentProfile.id, listingId: favListing1.id },
+        { studentProfileId: student.studentProfile.id, listingId: favListing2.id },
+      ],
+      skipDuplicates: true,
+    });
+
+    // Add Stay Request for some students
+    if (i % 2 === 0) {
+      await prisma.stayRequest.create({
+        data: {
+          studentProfileId: student.studentProfile.id,
+          listingId: favListing1.id,
+          moveInDate: new Date(Date.now() + 86400000 * 7), // 7 days later
+          durationMonths: 6,
+          status: i % 4 === 0 ? StayRequestStatus.ACCEPTED : StayRequestStatus.PENDING,
+          message: 'مرحباً، أود حجز السكن لبداية الفصل الدراسي القادم.',
+        },
+      });
+
+      // Add Notification
+      await prisma.notification.create({
+        data: {
+          userId: student.id,
+          type: NotificationType.STAY_REQUEST_RECEIVED,
+          title: 'طلب حجز جديد',
+          body: 'تم إرسال طلب الحجز الخاص بك بنجاح وهو قيد المراجعة.',
+        },
+      });
+    }
+  }
+
+  console.log('\n✅ MASSIVE DATABASE SEEDING COMPLETED SUCCESSFULLY!');
+  console.log('===================================================');
+  console.log('📋 SUMMARY:');
+  console.log(`- Admin Account: admin@sakank.com (Password: password123)`);
+  console.log(`- Students: 20 accounts (student1@sakank.com to student20@sakank.com)`);
+  console.log(`- Owners: 20 accounts (owner1@sakank.com to owner20@sakank.com)`);
+  console.log(`- Properties Created: ${propertyCount}`);
+  console.log(`- Units & Listings Created: ${createdListings.length}`);
+  console.log(`- Universal Password: password123`);
+  console.log('===================================================\n');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seeding Error:', e);
     process.exit(1);
   })
   .finally(async () => {

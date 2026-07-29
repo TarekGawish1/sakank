@@ -55,4 +55,28 @@ export const notificationsRepository = {
       where: { id, deletedAt: null },
     });
   },
+
+  // --- Device Token Management ---
+
+  registerDeviceToken: async (userId: string, token: string) => {
+    return prisma.deviceToken.upsert({
+      where: { token },
+      update: { userId }, // If token exists but for another user (or same), re-assign to this user
+      create: { userId, token },
+    });
+  },
+
+  unregisterDeviceToken: async (userId: string, token: string) => {
+    return prisma.deviceToken.deleteMany({
+      where: { userId, token },
+    });
+  },
+
+  getUserTokens: async (userId: string): Promise<string[]> => {
+    const tokens = await prisma.deviceToken.findMany({
+      where: { userId },
+      select: { token: true },
+    });
+    return tokens.map((t) => t.token);
+  },
 };

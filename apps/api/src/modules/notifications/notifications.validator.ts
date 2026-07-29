@@ -10,3 +10,11 @@ export const notificationsQuerySchema = z.object({
 });
 
 export type NotificationsQueryInput = z.infer<typeof notificationsQuerySchema>;
+
+export const registerTokenSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+});
+
+export const unregisterTokenSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+});
