@@ -80,7 +80,7 @@ export const PropertyDetailsScreen: React.FC = () => {
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      <BottomCTA />
+      <BottomCTA isLoggedIn={isAuthenticated} listingId={listing.id} />
     </View>
   );
 };

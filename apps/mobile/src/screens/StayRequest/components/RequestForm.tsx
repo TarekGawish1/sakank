@@ -3,7 +3,23 @@ import { View, StyleSheet, TextInput } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText } from '../../../components';
 
-export const RequestForm = () => {
+interface RequestFormProps {
+  moveInDate: string;
+  onChangeMoveInDate: (date: string) => void;
+  durationMonths: string;
+  onChangeDuration: (duration: string) => void;
+  message: string;
+  onChangeMessage: (msg: string) => void;
+}
+
+export const RequestForm: React.FC<RequestFormProps> = ({
+  moveInDate,
+  onChangeMoveInDate,
+  durationMonths,
+  onChangeDuration,
+  message,
+  onChangeMessage
+}) => {
   return (
     <View style={styles.container}>
       <AppText variant="title2" weight="bold" color="textPrimary" style={styles.title}>
@@ -16,24 +32,27 @@ export const RequestForm = () => {
         </AppText>
         <View style={styles.inputWrapper}>
           <TextInput 
-            placeholder="حدد التاريخ"
+            placeholder="مثال: 2026-08-01"
             placeholderTextColor={theme.colors.textMuted}
             style={styles.input}
-            editable={false}
+            value={moveInDate}
+            onChangeText={onChangeMoveInDate}
           />
         </View>
       </View>
 
       <View style={styles.inputGroup}>
         <AppText variant="label" color="textSecondary" style={styles.label}>
-          المدة
+          المدة (أشهر)
         </AppText>
         <View style={styles.inputWrapper}>
           <TextInput 
-            placeholder="اختر مدة العقد"
+            placeholder="مثال: 6"
             placeholderTextColor={theme.colors.textMuted}
             style={styles.input}
-            editable={false}
+            value={durationMonths}
+            onChangeText={onChangeDuration}
+            keyboardType="number-pad"
           />
         </View>
       </View>
@@ -50,6 +69,8 @@ export const RequestForm = () => {
             multiline
             numberOfLines={4}
             textAlignVertical="top"
+            value={message}
+            onChangeText={onChangeMessage}
           />
         </View>
       </View>

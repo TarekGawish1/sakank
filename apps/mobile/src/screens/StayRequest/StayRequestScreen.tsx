@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '../../navigation/types';
 import { theme } from '../../theme';
@@ -14,20 +14,41 @@ import {
   SuccessState,
   StayRequestSkeleton
 } from './components';
+import { useCreateStayRequest } from '../../hooks/stayRequests';
 
 type ViewState = 'loading' | 'error' | 'form' | 'success';
 type StayRequestNavProp = NativeStackNavigationProp<HomeStackParamList>;
+type StayRequestRouteProp = RouteProp<HomeStackParamList, 'StayRequest'>;
 
 export const StayRequestScreen: React.FC = () => {
   const navigation = useNavigation<StayRequestNavProp>();
+  const route = useRoute<StayRequestRouteProp>();
+  const { listingId } = route.params;
+
   const [viewState, setViewState] = useState<ViewState>('form');
+  const [moveInDate, setMoveInDate] = useState('');
+  const [durationMonths, setDurationMonths] = useState('');
+  const [message, setMessage] = useState('');
+
+  const { mutate: createStayRequest, isPending, isError } = useCreateStayRequest();
 
   const handleSubmit = () => {
-    // UI Mock
-    setViewState('loading');
-    setTimeout(() => {
-      setViewState('success');
-    }, 1500);
+    createStayRequest(
+      {
+        listingId,
+        moveInDate: moveInDate || new Date().toISOString(),
+        durationMonths: durationMonths ? parseInt(durationMonths, 10) : 6,
+        message,
+      },
+      {
+        onSuccess: () => {
+          setViewState('success');
+        },
+        onError: () => {
+          setViewState('error');
+        }
+      }
+    );
   };
 
   const renderHeader = () => (
@@ -42,11 +63,11 @@ export const StayRequestScreen: React.FC = () => {
   );
 
   const renderContent = () => {
-    if (viewState === 'loading') {
+    if (isPending) {
       return <StayRequestSkeleton />;
     }
 
-    if (viewState === 'error') {
+    if (viewState === 'error' || isError) {
       return (
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.centerContainer}>
@@ -81,7 +102,14 @@ export const StayRequestScreen: React.FC = () => {
             {renderHeader()}
             <PropertySummaryCard />
             <View style={styles.divider} />
-            <RequestForm />
+            <RequestForm
+              moveInDate={moveInDate}
+              onChangeMoveInDate={setMoveInDate}
+              durationMonths={durationMonths}
+              onChangeDuration={setDurationMonths}
+              message={message}
+              onChangeMessage={setMessage}
+            />
             <View style={styles.divider} />
             <SummaryCard />
             <NoticeCard />

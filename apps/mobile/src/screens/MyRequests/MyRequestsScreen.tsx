@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, StyleSheet, FlatList, ListRenderItem } from 'react-native';
+import React from 'react';
+import { SafeAreaView, View, StyleSheet, FlatList, ListRenderItem, RefreshControl } from 'react-native';
 import { theme } from '../../theme';
 import { AppText } from '../../components';
 import {
@@ -10,65 +10,13 @@ import {
   ErrorCard,
 } from './components';
 import { RequestStatus } from './components/StatusBadge';
-
-interface MockRequest {
-  id: string;
-  image: string;
-  title: string;
-  address: string;
-  requestedDate: string;
-  moveInDate: string;
-  price: string;
-  status: RequestStatus;
-}
-
-const MOCK_REQUESTS: MockRequest[] = [
-  {
-    id: '1',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    title: 'فيلا فاخرة في الياسمين',
-    address: 'الرياض، حي الياسمين',
-    requestedDate: '12 أكتوبر 2023',
-    moveInDate: '01 نوفمبر 2023',
-    price: '2,500,000',
-    status: 'pending'
-  },
-  {
-    id: '2',
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    title: 'شقة مودرن مطلة',
-    address: 'جدة، الشاطئ',
-    requestedDate: '05 سبتمبر 2023',
-    moveInDate: '01 أكتوبر 2023',
-    price: '85,000',
-    status: 'accepted'
-  },
-  {
-    id: '3',
-    image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    title: 'دور أرضي بحديقة',
-    address: 'الدمام، حي الفيصلية',
-    requestedDate: '20 أغسطس 2023',
-    moveInDate: '15 سبتمبر 2023',
-    price: '1,200,000',
-    status: 'rejected'
-  },
-  {
-    id: '4',
-    image: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    title: 'شقة استوديو',
-    address: 'الرياض، الملقا',
-    requestedDate: '10 يوليو 2023',
-    moveInDate: '01 أغسطس 2023',
-    price: '45,000',
-    status: 'cancelled'
-  }
-];
-
-type ViewState = 'loading' | 'error' | 'empty' | 'data';
+import { useMyStayRequests } from '../../hooks/stayRequests';
+import { StayRequestResponse } from '../../api/stayRequests.api';
 
 export const MyRequestsScreen: React.FC = () => {
-  const [viewState, setViewState] = useState<ViewState>('data');
+  const { data, isLoading, isError, refetch, isRefetching } = useMyStayRequests();
+
+  const requests = data?.items || [];
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -81,39 +29,49 @@ export const MyRequestsScreen: React.FC = () => {
     </View>
   );
 
-  const renderItem: ListRenderItem<MockRequest> = ({ item }) => (
+  const renderItem: ListRenderItem<StayRequestResponse> = ({ item }) => (
     <RequestCard 
       id={item.id}
-      image={item.image}
-      title={item.title}
-      address={item.address}
-      requestedDate={item.requestedDate}
-      moveInDate={item.moveInDate}
-      price={item.price}
-      status={item.status}
+      image={item.listing.primaryImage || 'https://via.placeholder.com/800x600?text=No+Image'}
+      title={item.listing.title}
+      address={item.listing.location}
+      requestedDate={new Date(item.createdAt).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}
+      moveInDate={new Date(item.moveInDate).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}
+      price={item.listing.monthlyRent.toString()}
+      status={item.status.toLowerCase() as RequestStatus}
     />
   );
 
   const renderContent = () => {
-    switch (viewState) {
-      case 'loading':
-        return <RequestsSkeleton />;
-      case 'error':
-        return <ErrorCard onRetry={() => setViewState('loading')} />;
-      case 'empty':
-        return <EmptyState />;
-      case 'data':
-      default:
-        return (
-          <FlatList
-            data={MOCK_REQUESTS}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
-        );
+    if (isLoading && !isRefetching) {
+      return <RequestsSkeleton />;
     }
+
+    if (isError) {
+      return <ErrorCard onRetry={() => refetch()} />;
+    }
+
+    if (requests.length === 0) {
+      return <EmptyState />;
+    }
+
+    return (
+      <FlatList
+        data={requests}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefetching} 
+            onRefresh={refetch} 
+            colors={[theme.colors.surfacePrimary]} 
+            tintColor={theme.colors.surfacePrimary} 
+          />
+        }
+      />
+    );
   };
 
   return (

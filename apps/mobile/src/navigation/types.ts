@@ -11,7 +11,7 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
   Home: undefined;
   PropertyDetails: { listingId: string };
-  StayRequest: undefined;
+  StayRequest: { listingId: string };
 };
 
 export type SearchStackParamList = {

@@ -8,11 +8,12 @@ import { Button, AppIcon } from '../../../components';
 
 interface BottomCTAProps {
   isLoggedIn?: boolean;
+  listingId?: string;
 }
 
 type PropertyDetailsNavProp = NativeStackNavigationProp<HomeStackParamList>;
 
-export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false }) => {
+export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false, listingId }) => {
   const navigation = useNavigation<PropertyDetailsNavProp>();
   return (
     <View style={styles.container}>
@@ -24,7 +25,7 @@ export const BottomCTA: React.FC<BottomCTAProps> = ({ isLoggedIn = false }) => {
           title={isLoggedIn ? "إرسال طلب سكن" : "تسجيل الدخول للطلب"} 
           hierarchy="primary" 
           leadingIcon={!isLoggedIn ? <AppIcon name="Lock" size="sm" color="inverse" /> : undefined}
-          onPress={() => navigation.navigate('StayRequest')} 
+          onPress={() => listingId && navigation.navigate('StayRequest', { listingId })} 
         />
       </View>
     </View>
