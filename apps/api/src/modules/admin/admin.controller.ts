@@ -3,6 +3,57 @@ import { adminService } from './admin.service';
 import { sendSuccess } from '~/shared/utils/response';
 
 export const adminController = {
+  getStats: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await adminService.getStats();
+      return sendSuccess(res, stats);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  listUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const search = req.query.search ? String(req.query.search) : undefined;
+      const { items, meta } = await adminService.listUsers(page, limit, search);
+      return sendSuccess(res, items, meta);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  listProperties: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const search = req.query.search ? String(req.query.search) : undefined;
+      const { items, meta } = await adminService.listProperties(page, limit, search);
+      return sendSuccess(res, items, meta);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  blockUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await adminService.blockUser(req.params.id);
+      return sendSuccess(res, result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteProperty: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await adminService.deleteProperty(req.params.id);
+      return sendSuccess(res, result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   listPendingVerifications: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = Number(req.query.page) || 1;

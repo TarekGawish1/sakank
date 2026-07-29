@@ -15,6 +15,21 @@ const router = Router();
 // All admin routes require ADMIN role
 router.use(requireAuth, requireRole(['ADMIN']));
 
+// GET /api/v1/admin/stats
+router.get('/stats', adminController.getStats);
+
+// GET /api/v1/admin/users
+router.get('/users', adminController.listUsers);
+
+// POST /api/v1/admin/users/:id/block
+router.post('/users/:id/block', adminController.blockUser);
+
+// GET /api/v1/admin/properties
+router.get('/properties', adminController.listProperties);
+
+// DELETE /api/v1/admin/properties/:id
+router.delete('/properties/:id', adminController.deleteProperty);
+
 // GET /api/v1/admin/verifications — List pending verifications
 router.get(
   '/verifications',
