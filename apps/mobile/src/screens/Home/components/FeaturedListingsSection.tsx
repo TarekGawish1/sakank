@@ -3,9 +3,9 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { theme } from '../../../theme';
 import { AppText, ListingCard, AppIcon } from '../../../components';
-import { ListingFeedItem } from '../../../../api/listings.api';
-import { RootStackParamList } from '../../../../navigation/RootNavigator';
-import { useFavorites, useToggleFavorite } from '../../../../hooks/favorites';
+import { ListingFeedItem } from '../../../api/listings.api';
+import { RootStackParamList } from '../../../navigation/RootNavigator';
+import { useFavorites, useToggleFavorite } from '../../../hooks/favorites';
 
 interface FeaturedListingsSectionProps {
   data: ListingFeedItem[];

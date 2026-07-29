@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const listingsQuerySchema = z.object({
-  cursor: z.string().uuid().optional(),
+  cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
   gender: z.enum(['MALE', 'FEMALE', 'MIXED']).optional(),
   minPrice: z.coerce.number().min(0).optional(),
@@ -16,11 +16,11 @@ export const listingsQuerySchema = z.object({
 });
 
 export const listingIdParamSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
 });
 
 export const favoriteParamSchema = z.object({
-  listingId: z.string().uuid(),
+  listingId: z.string(),
 });
 
 export const favoritesQuerySchema = z.object({

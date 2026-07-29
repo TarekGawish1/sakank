@@ -73,4 +73,7 @@ export const colors = {
   warning: palette.orange500,
   error: palette.red500,
   info: palette.blue500,
+
+  // Brand (Legacy/Global references)
+  brandPrimary: palette.blue500,
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { theme } from '../../../../theme';
-import { AppText, Button, AppIcon } from '../../../../components';
+import { theme } from '../../../theme';
+import { AppText, Button, AppIcon } from '../../../components';
 
 interface SuccessCardProps {
   icon: string;

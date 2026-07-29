@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { listingsController } from './listings.controller';
-import { requireAuth } from '~/shared/middlewares/auth';
+import { requireAuth, optionalAuth } from '~/shared/middlewares/auth';
 import { validate } from '~/shared/middlewares/validate';
 import {
   listingsQuerySchema,
@@ -14,7 +14,7 @@ const router = Router();
 // GET /api/v1/listings — Paginated home feed with filters
 router.get(
   '/',
-  requireAuth,
+  optionalAuth,
   validate({ query: listingsQuerySchema }),
   listingsController.getListings,
 );
@@ -22,7 +22,7 @@ router.get(
 // GET /api/v1/listings/:id — Full listing details
 router.get(
   '/:id',
-  requireAuth,
+  optionalAuth,
   validate({ params: listingIdParamSchema }),
   listingsController.getListingById,
 );

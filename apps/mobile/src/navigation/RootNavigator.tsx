@@ -16,7 +16,7 @@ const SplashLoading = () => (
 );
 
 export const RootNavigator = () => {
-  const { isAuthenticated, isLoadingSession } = useSession();
+  const { isAuthenticated, isLoadingSession, isGuest } = useSession();
 
   if (isLoadingSession) {
     return <SplashLoading />;
@@ -24,7 +24,7 @@ export const RootNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
+      {(!isAuthenticated && !isGuest) ? (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       ) : (
         <Stack.Screen name="Main" component={MainNavigator} />

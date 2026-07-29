@@ -19,7 +19,7 @@ export const HomeScreen: React.FC = () => {
     if (isLoading && !isRefetching) {
       return (
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.brandPrimary} />
+          <ActivityIndicator size="large" color={theme.colors.surfacePrimary} />
           <AppText variant="bodyBase" style={styles.loadingText}>جاري تحميل العقارات...</AppText>
         </View>
       );
@@ -61,8 +61,8 @@ export const HomeScreen: React.FC = () => {
           <RefreshControl 
             refreshing={isRefetching} 
             onRefresh={refetch} 
-            colors={[theme.colors.brandPrimary]} 
-            tintColor={theme.colors.brandPrimary} 
+            colors={[theme.colors.surfacePrimary]} 
+            tintColor={theme.colors.surfacePrimary} 
           />
         }
       >

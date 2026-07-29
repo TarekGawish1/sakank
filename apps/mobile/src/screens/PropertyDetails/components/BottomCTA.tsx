@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HomeStackParamList } from '../../../../navigation/types';
+import { HomeStackParamList } from '../../../navigation/types';
 import { theme } from '../../../theme';
 import { Button, AppIcon } from '../../../components';
 

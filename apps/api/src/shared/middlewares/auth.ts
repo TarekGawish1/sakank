@@ -37,3 +37,26 @@ export const requireAuth = (req: Request, _res: Response, next: NextFunction) =>
     next(new UnauthorizedError('Invalid or expired access token'));
   }
 };
+export const optionalAuth = (req: Request, _res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next(); // Proceed without auth
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return next(); // Proceed without auth
+    }
+
+    const payload = verifyAccessToken(token);
+    req.user = {
+      userId: payload.userId,
+      role: payload.role,
+    };
+    next();
+  } catch (error) {
+    // If token is invalid/expired, proceed as guest
+    next();
+  }
+};

@@ -39,7 +39,7 @@ export const PropertyHeader: React.FC<PropertyHeaderProps> = ({ listing }) => {
       <View style={styles.locationContainer}>
         <AppIcon name="MapPin" size="sm" color="tertiary" />
         <AppText variant="bodySm" color="textSecondary" style={styles.address}>
-          {listing.location.governorate}، {listing.location.city}، {listing.location.area}
+          {typeof listing.location.governorate === 'object' ? (listing.location.governorate as any).name : listing.location.governorate}، {typeof listing.location.city === 'object' ? (listing.location.city as any).name : listing.location.city}، {typeof listing.location.area === 'object' ? (listing.location.area as any).name : listing.location.area}
         </AppText>
       </View>
       

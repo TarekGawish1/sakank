@@ -10,7 +10,7 @@ export const listingsService = {
    */
   getListingsFeed: async (
     query: ListingsQueryDto,
-    userId: string,
+    userId?: string,
   ): Promise<{ items: ListingFeedItem[]; meta: CursorPaginationMeta }> => {
     const listings = await listingsRepository.findPublishedListings(query);
 
@@ -35,7 +35,7 @@ export const listingsService = {
    */
   getListingDetail: async (
     listingId: string,
-    userId: string,
+    userId?: string,
   ): Promise<ListingDetailResponse> => {
     const listing = await listingsRepository.findListingById(listingId);
 
@@ -44,11 +44,13 @@ export const listingsService = {
     }
 
     // Check if favorited by current user
-    const studentProfileId = await listingsRepository.getStudentProfileId(userId);
     let isFavorited = false;
-    if (studentProfileId) {
-      const favorite = await listingsRepository.findFavorite(studentProfileId, listingId);
-      isFavorited = !!favorite;
+    if (userId) {
+      const studentProfileId = await listingsRepository.getStudentProfileId(userId);
+      if (studentProfileId) {
+        const favorite = await listingsRepository.findFavorite(studentProfileId, listingId);
+        isFavorited = !!favorite;
+      }
     }
 
     return toListingDetailResponse(listing, isFavorited);

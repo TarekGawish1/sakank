@@ -5,8 +5,10 @@ import { sendSuccess } from '~/shared/utils/response';
 export const listingsController = {
   getListings: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user!.userId;
+      const userId = req.user?.userId;
+      console.log('GET LISTINGS CALLED! QUERY:', req.query, 'USERID:', userId);
       const { items, meta } = await listingsService.getListingsFeed(req.query as never, userId);
+      console.log('RETURNING ITEMS COUNT:', items.length);
       return sendSuccess(res, items, meta);
     } catch (error) {
       next(error);
@@ -15,7 +17,7 @@ export const listingsController = {
 
   getListingById: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user!.userId;
+      const userId = req.user?.userId;
       const result = await listingsService.getListingDetail(req.params.id, userId);
       return sendSuccess(res, result);
     } catch (error) {

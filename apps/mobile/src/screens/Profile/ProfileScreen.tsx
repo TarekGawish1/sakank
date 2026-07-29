@@ -5,7 +5,21 @@ import { AppText, Avatar, Button, Spinner, AppIcon } from '../../components';
 import { theme } from '../../theme';
 
 export const ProfileScreen = () => {
-  const { user, isLoadingSession, isSessionError, logout, isLoggingOut } = useSession();
+  const { user, isLoadingSession, isSessionError, logout, isLoggingOut, isGuest } = useSession();
+
+  if (isGuest && !user) {
+    return (
+      <View style={styles.centerContainer}>
+        <AppIcon name="User" size="xl" color="tertiary" />
+        <AppText variant="title2" style={{ marginTop: 16, marginBottom: 8 }}>حسابي</AppText>
+        <AppText variant="bodyBase" color="textSecondary" style={{ marginBottom: 24 }}>يرجى تسجيل الدخول لعرض تفاصيل حسابك</AppText>
+        <Button 
+          title="تسجيل الدخول" 
+          onPress={() => logout()} 
+        />
+      </View>
+    );
+  }
 
   if (isLoadingSession) {
     return (
@@ -32,32 +46,32 @@ export const ProfileScreen = () => {
       <View style={styles.header}>
         <Avatar initials={fullName.substring(0, 2)} size="xl" />
         <AppText variant="title2" style={styles.name}>{fullName}</AppText>
-        <AppText variant="body" color="textSecondary">
+        <AppText variant="bodyBase" color="textSecondary">
           {user.role === 'STUDENT' ? 'طالب' : 'صاحب عقار'}
         </AppText>
       </View>
 
       <View style={styles.section}>
-        <AppText variant="subtitle" style={styles.sectionTitle}>المعلومات الشخصية</AppText>
+        <AppText variant="title2" style={styles.sectionTitle}>المعلومات الشخصية</AppText>
         
         {user.email && (
           <View style={styles.infoRow}>
             <AppIcon name="Mail" size="sm" color="tertiary" />
-            <AppText variant="body">{user.email}</AppText>
+            <AppText variant="bodyBase">{user.email}</AppText>
           </View>
         )}
 
         {user.phone && (
           <View style={styles.infoRow}>
             <AppIcon name="Phone" size="sm" color="tertiary" />
-            <AppText variant="body">{user.phone}</AppText>
+            <AppText variant="bodyBase">{user.phone}</AppText>
           </View>
         )}
 
         {user.gender && (
           <View style={styles.infoRow}>
             <AppIcon name="User" size="sm" color="tertiary" />
-            <AppText variant="body">
+            <AppText variant="bodyBase">
               {user.gender === 'MALE' ? 'ذكر' : user.gender === 'FEMALE' ? 'أنثى' : user.gender}
             </AppText>
           </View>
