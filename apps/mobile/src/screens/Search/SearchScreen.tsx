@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { theme } from '../../theme';
 import { AppText, AppIcon, SearchBar } from '../../components';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { HomeStackParamList } from '../../navigation/types';
 import { SearchFiltersModal } from './components/SearchFiltersModal';
+import { useSearch } from '../../hooks/listings';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const MOCK_RECENT = [
   'شقق قريبة من جامعة الملك سعود',
@@ -27,19 +30,52 @@ const MOCK_AREAS = [
   'التجمع',
 ];
 
-const MOCK_SUGGESTIONS = [
-  { text: 'جامعة المنصورة', category: 'جامعة' },
-  { text: 'جامعة دمياط', category: 'جامعة' },
-  { text: 'حي الجامعة', category: 'حي' },
-  { text: 'مدينة نصر', category: 'حي' },
-  { text: 'شقة مفروشة', category: 'سكن' },
-  { text: 'استوديو', category: 'سكن' },
-];
-
 export const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebounce(searchQuery, 400);
+
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const navigation = useNavigation();
+
+  // Filters State
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const [selectedFurnish, setSelectedFurnish] = useState<string | null>(null);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedDistance, setSelectedDistance] = useState<string | null>(null);
+
+  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
+
+  const mapUnitType = (type: string | null) => {
+    if (type === 'شقق') return 'APARTMENT';
+    if (type === 'غرف') return 'ROOM';
+    if (type === 'استوديو') return 'STUDIO';
+    return undefined;
+  };
+
+  const mapGender = (gender: string | null) => {
+    if (gender === 'طالبات') return 'FEMALE';
+    if (gender === 'طلاب') return 'MALE';
+    return undefined;
+  };
+
+  const hasFilters = selectedType || selectedGender || selectedAmenities.length > 0 || selectedFurnish || selectedDistance;
+
+  const { data, isLoading, isError } = useSearch(debouncedQuery, {
+    unitType: mapUnitType(selectedType),
+    gender: mapGender(selectedGender),
+  });
+
+  const searchResults = data?.items || [];
+  const showResults = debouncedQuery.length > 0 || hasFilters;
+
+  const mapCategory = (type: string) => {
+    switch(type) {
+      case 'APARTMENT': return 'شقة';
+      case 'ROOM': return 'غرفة';
+      case 'STUDIO': return 'استوديو';
+      default: return 'سكن';
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} accessible accessibilityLabel="شاشة البحث">
@@ -50,7 +86,7 @@ export const SearchScreen: React.FC = () => {
           accessibilityLabel="الفلاتر"
           onPress={() => setFiltersVisible(true)}
         >
-          <AppIcon name="Sliders" size="md" color="primary" />
+          <AppIcon name="Sliders" size="md" color={hasFilters ? 'primary' : 'textSecondary'} />
         </Pressable>
         <View style={styles.searchWrapper}>
           <SearchBar
@@ -74,28 +110,58 @@ export const SearchScreen: React.FC = () => {
       <SearchFiltersModal
         visible={filtersVisible}
         onClose={() => setFiltersVisible(false)}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+        selectedGender={selectedGender}
+        setSelectedGender={setSelectedGender}
+        selectedFurnish={selectedFurnish}
+        setSelectedFurnish={setSelectedFurnish}
+        selectedAmenities={selectedAmenities}
+        setSelectedAmenities={setSelectedAmenities}
+        selectedDistance={selectedDistance}
+        setSelectedDistance={setSelectedDistance}
+        onApply={() => {}}
       />
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        {searchQuery.length > 0 ? (
+        {showResults ? (
           <View style={styles.suggestionsList}>
-            {MOCK_SUGGESTIONS.map((item, index) => (
-              <Pressable key={index} style={styles.suggestionRow}>
-                <View style={styles.suggestionMain}>
-                  <AppIcon name="Search" size="md" color="tertiary" />
-                  <AppText variant="bodyBase" color="textPrimary" style={styles.suggestionText}>
-                    {item.text}
-                  </AppText>
-                </View>
-                {item.category && (
-                  <View style={styles.categoryBadge}>
-                    <AppText variant="caption" color="textSecondary">
-                      {item.category}
+            {isLoading ? (
+              <View style={styles.centerState}>
+                <ActivityIndicator size="small" color={theme.colors.surfacePrimary} />
+                <AppText variant="bodyBase" color="textSecondary" style={styles.stateText}>جاري البحث...</AppText>
+              </View>
+            ) : isError ? (
+              <View style={styles.centerState}>
+                <AppIcon name="AlertCircle" size="lg" color="error" />
+                <AppText variant="bodyBase" color="error" style={styles.stateText}>حدث خطأ أثناء البحث</AppText>
+              </View>
+            ) : searchResults.length === 0 ? (
+              <View style={styles.centerState}>
+                <AppIcon name="Search" size="lg" color="tertiary" />
+                <AppText variant="bodyBase" color="textSecondary" style={styles.stateText}>لا توجد نتائج مطابقة</AppText>
+              </View>
+            ) : (
+              searchResults.map((item) => (
+                <Pressable 
+                  key={item.id} 
+                  style={styles.suggestionRow}
+                  onPress={() => navigation.navigate('PropertyDetails', { listingId: item.id })}
+                >
+                  <View style={styles.suggestionMain}>
+                    <AppIcon name="Search" size="md" color="tertiary" />
+                    <AppText variant="bodyBase" color="textPrimary" style={styles.suggestionText} numberOfLines={1}>
+                      {item.title}
                     </AppText>
                   </View>
-                )}
-              </Pressable>
-            ))}
+                  <View style={styles.categoryBadge}>
+                    <AppText variant="caption" color="textSecondary">
+                      {mapCategory(item.unitType)}
+                    </AppText>
+                  </View>
+                </Pressable>
+              ))
+            )}
           </View>
         ) : (
           <>
@@ -136,7 +202,7 @@ export const SearchScreen: React.FC = () => {
                 contentContainerStyle={styles.horizontalList}
               >
                 {MOCK_UNIVERSITIES.map((item, index) => (
-                  <Pressable key={index} style={styles.chip}>
+                  <Pressable key={index} style={styles.chip} onPress={() => setSearchQuery(item)}>
                     <AppText variant="bodyBase" color="textSecondary">
                       {item}
                     </AppText>
@@ -152,7 +218,7 @@ export const SearchScreen: React.FC = () => {
               </AppText>
               <View style={styles.chipWrapContainer}>
                 {MOCK_AREAS.map((item, index) => (
-                  <Pressable key={index} style={styles.chip}>
+                  <Pressable key={index} style={styles.chip} onPress={() => setSearchQuery(item)}>
                     <AppText variant="bodyBase" color="textSecondary">
                       {item}
                     </AppText>
@@ -292,4 +358,13 @@ const styles = StyleSheet.create({
   bottomSpacer: {
     height: theme.spacing[40],
   },
+  centerState: {
+    padding: theme.spacing[40],
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing[12],
+  },
+  stateText: {
+    marginTop: theme.spacing[4],
+  }
 });

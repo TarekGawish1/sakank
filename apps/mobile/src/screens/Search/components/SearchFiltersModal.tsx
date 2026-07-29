@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Modal, ScrollView, SafeAreaView, Pressable } from 'react-native';
 import { theme } from '../../../theme';
 import { AppText, AppIcon, Button } from '../../../components';
@@ -6,10 +6,21 @@ import { AppText, AppIcon, Button } from '../../../components';
 export interface SearchFiltersModalProps {
   visible: boolean;
   onClose: () => void;
+  selectedType: string | null;
+  setSelectedType: (type: string | null) => void;
+  selectedGender: string | null;
+  setSelectedGender: (gender: string | null) => void;
+  selectedFurnish: string | null;
+  setSelectedFurnish: (furnish: string | null) => void;
+  selectedAmenities: string[];
+  setSelectedAmenities: (amenities: string[]) => void;
+  selectedDistance: string | null;
+  setSelectedDistance: (distance: string | null) => void;
+  onApply: () => void;
 }
 
-const PROPERTY_TYPES = ['طلاب', 'شقق', 'غرف', 'استوديو'];
-const GENDERS = ['الكل', 'طالبات', 'طلاب'];
+const PROPERTY_TYPES = ['شقق', 'غرف', 'استوديو'];
+const GENDERS = ['طالبات', 'طلاب'];
 const FURNISHING = ['غير مفروش', 'مفروش'];
 const AMENITIES = ['Wi-Fi', 'تكييف', 'موقف سيارات', 'غسالة', 'مصعد'];
 const DISTANCES = ['0–1 كم', '1–3 كم', '3–5 كم'];
@@ -17,23 +28,29 @@ const DISTANCES = ['0–1 كم', '1–3 كم', '3–5 كم'];
 export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
   visible,
   onClose,
+  selectedType,
+  setSelectedType,
+  selectedGender,
+  setSelectedGender,
+  selectedFurnish,
+  setSelectedFurnish,
+  selectedAmenities,
+  setSelectedAmenities,
+  selectedDistance,
+  setSelectedDistance,
+  onApply,
 }) => {
-  // Mock states to allow interactions
-  const [selectedType, setSelectedType] = useState<string>('طلاب');
-  const [selectedGender, setSelectedGender] = useState<string>('الكل');
-  const [selectedFurnish, setSelectedFurnish] = useState<string | null>(null);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [selectedDistance, setSelectedDistance] = useState<string | null>(null);
-
   const toggleAmenity = (item: string) => {
-    setSelectedAmenities((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    setSelectedAmenities(
+      selectedAmenities.includes(item)
+        ? selectedAmenities.filter((i) => i !== item)
+        : [...selectedAmenities, item]
     );
   };
 
   const handleReset = () => {
-    setSelectedType('طلاب');
-    setSelectedGender('الكل');
+    setSelectedType(null);
+    setSelectedGender(null);
     setSelectedFurnish(null);
     setSelectedAmenities([]);
     setSelectedDistance(null);
@@ -217,7 +234,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
 
         <View style={styles.footer}>
           <View style={styles.applyBtnWrapper}>
-            <Button title="تطبيق الفلاتر" onPress={onClose} fullWidth />
+            <Button title="تطبيق الفلاتر" onPress={() => { onApply(); onClose(); }} fullWidth />
           </View>
           <Pressable style={styles.resetBtn} onPress={handleReset}>
             <AppText variant="button" color="textPrimary">
