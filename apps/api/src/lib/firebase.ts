@@ -26,7 +26,7 @@ export const initFirebase = () => {
       logger.warn('⚠️ Firebase environment variables are missing. Push notifications will be skipped.');
     }
   } catch (error: any) {
-    logger.error('❌ Failed to initialize Firebase Admin SDK:', error.message || error);
+    logger.error(`❌ Failed to initialize Firebase Admin SDK: ${error.message || error}`);
   }
 };
 
@@ -53,12 +53,12 @@ export const sendMulticastNotification = async (tokens: string[], title: string,
       response.responses.forEach((resp: any, idx: number) => {
         if (!resp.success) {
           failedTokens.push(tokens[idx]);
-          logger.error(`❌ FCM Error for token ${tokens[idx]}:`, resp.error?.message || resp.error);
+          logger.error(`❌ FCM Error for token ${tokens[idx]}: ${resp.error?.message || resp.error}`);
         }
       });
       // Optionally: Clean up invalid tokens from the database here
     }
   } catch (error: any) {
-    logger.error('❌ Failed to send multicast push notification:', error.message || error);
+    logger.error(`❌ Failed to send multicast push notification: ${error.message || error}`);
   }
 };

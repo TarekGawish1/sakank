@@ -1,7 +1,7 @@
 import { CreatePropertyInput } from './properties.validator';
 import { propertiesRepository } from './properties.repository';
 import { toPropertyResponse } from './properties.mapper';
-import { PropertyResponse } from './properties.dto';
+import { PropertyResponse, CreatePropertyDto } from './properties.dto';
 import { locationService } from '~/shared/services/location.service';
 import { BadRequestError, ForbiddenError } from '~/shared/errors';
 
@@ -25,7 +25,7 @@ export const propertiesService = {
       loc.cityName
     );
 
-    const property = await propertiesRepository.createProperty(ownerProfileId, data);
+    const property = await propertiesRepository.createProperty(ownerProfileId, data as CreatePropertyDto);
     return toPropertyResponse(property as any);
   },
 };
