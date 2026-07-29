@@ -32,6 +32,9 @@
     "nodemailer": "^9.0.3",
     "pino": "^9.0.0",
     "pino-http": "^10.0.0",
+    "tsc-alias": "^1.9.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
     "uuid": "^10.0.0",
     "xss": "^1.0.15",
     "zod": "^3.0.0"
@@ -48,10 +51,7 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8.0.0",
     "pino-pretty": "^11.0.0",
-    "prisma": "^5.0.0",
-    "tsc-alias": "^1.9.1",
-    "tsx": "^4.0.0",
-    "typescript": "^5.0.0"
+    "prisma": "^5.0.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
