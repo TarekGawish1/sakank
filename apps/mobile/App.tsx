@@ -1,10 +1,18 @@
 import "./global.css";
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, I18nManager } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { Alexandria_400Regular, Alexandria_500Medium, Alexandria_600SemiBold, Alexandria_700Bold } from '@expo-google-fonts/alexandria';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './src/lib/queryClient';
+
+import { RootNavigator } from './src/navigation/RootNavigator';
+
+// Force RTL Layout
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(true);
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -23,14 +31,11 @@ export default function App() {
   }
 
   return (
-    <View className="flex-1 bg-primary-50 items-center justify-center p-24">
-      <Text className="font-alexandriaBold text-32 leading-40 text-primary-900 mb-12 text-center">
-        NativeWind جاهز!
-      </Text>
-      <Text className="font-inter text-16 text-neutrals-600 text-center">
-        Tailwind CSS + Expo Setup Complete
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <View style={{ flex: 1 }}>
+        <RootNavigator />
+        <StatusBar style="auto" />
+      </View>
+    </QueryClientProvider>
   );
 }
